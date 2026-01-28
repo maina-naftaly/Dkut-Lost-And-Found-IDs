@@ -513,6 +513,27 @@
             box-shadow: 0 8px 25px rgba(30, 86, 49, 0.3);
         }
 
+        /* Other Location Input Styles */
+#otherLocationContainer {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#otherLocationInput {
+    border-color: var(--dkut-light-green);
+    background: rgba(76, 156, 107, 0.05);
+}
+
+#otherLocationInput:focus {
+    border-color: var(--dkut-green);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(30, 86, 49, 0.1);
+}
+
         .btn-submit:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -793,19 +814,39 @@
                         <label for="locationFound" class="form-label">
                             <i class="fas fa-map-marker-alt"></i> Where Did You Find It? <span class="required">*</span>
                         </label>
-                        <select class="form-select" id="locationFound" required>
-                            <option value="">Select Location</option>
-                            <option value="Resource Center">Resource Center</option>
-                            <option value="School of Business">School of Business</option>
-                            <option value="School of Engineering">School of Engineering</option>
-                            <option value="Freedom Hall">Freedom Hall</option>
-                            <option value="Cafeteria">Cafeteria</option>
-                            <option value="Library">Library</option>
-                            <option value="Sports Complex">Sports Complex</option>
-                            <option value="Boma">Boma</option>
-                            <option value="Nyeri View">Nyeri View</option>
-                            <option value="Not Sure">Not Sure</option>
-                        </select>
+                        <div class="mb-4">
+    <label for="locationFound" class="form-label">
+        <i class="fas fa-map-marker-alt"></i> Where Did You Find It? <span class="required">*</span>
+    </label>
+    <select class="form-select" id="locationFound" required>
+        <option value="">Select Location</option>
+        <option value="Resource Center">Resource Center</option>
+        <option value="School of Business">School of Business</option>
+        <option value="School of Engineering">School of Engineering</option>
+        <option value="Freedom Hall">Freedom Hall</option>
+        <option value="Cafeteria">Cafeteria</option>
+        <option value="Library">Library</option>
+        <option value="Sports Complex">Sports Complex</option>
+        <option value="Boma">Boma</option>
+        <option value="Nyeri View">Nyeri View</option>
+        <option value="Others">Others</option>
+    </select>
+    
+    <!-- Other Location Input -->
+    <div id="otherLocationContainer" style="display: none; margin-top: 15px;">
+        <label for="otherLocationInput" class="form-label">
+            <i class="fas fa-pen"></i> Please specify the location
+        </label>
+        <input 
+            type="text" 
+            class="form-control" 
+            id="otherLocationInput" 
+            placeholder="Enter the specific location where you found the ID"
+            maxlength="100"
+        >
+        <small class="form-text">Enter the exact location where you found the ID card</small>
+    </div>
+</div>
                     </div>
 
                     <div class="mb-4">
@@ -982,6 +1023,23 @@
 
         // Set up event listeners
         function setupEventListeners() {
+
+// Location dropdown change handler
+document.getElementById('locationFound').addEventListener('change', function() {
+    const otherContainer = document.getElementById('otherLocationContainer');
+    const otherInput = document.getElementById('otherLocationInput');
+    
+    if (this.value === 'Others') {
+        otherContainer.style.display = 'block';
+        otherInput.required = true;
+        otherInput.focus();
+    } else {
+        otherContainer.style.display = 'none';
+        otherInput.required = false;
+        otherInput.value = '';
+    }
+});
+
             // Upload area click handler
             document.getElementById('uploadArea').addEventListener('click', function() {
                 document.getElementById('idImage').click();

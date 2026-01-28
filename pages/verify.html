@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - DeKUT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /*
+         * --- Color Palette --- (Matching Login/Signup)
+         * Background: #18191d (Deep Dark Gray/Blue)
+         * Card Background: #24262c (Slightly Lighter Dark Gray/Blue)
+         * Text: #e0e0e0 (Light Gray for contrast)
+         * Primary Accent (Gradient): #667eea, #764ba2 (Used for primary buttons/highlights)
+         * Success Color: #28a745 (Green)
+         * Error Color: #dc3545 (Red)
+        */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* Changed to solid dark background color */
+            background-color: #18191d; 
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-size: 18px;
+            color: #e0e0e0; /* Default text color set to light gray */
+        }
+
+        .verify-container {
+            max-width: 600px;
+            width: 100%;
+            /* Changed to dark card background color */
+            background-color: #24262c; 
+            border-radius: 20px;
+            padding: 60px 50px;
+            /* Updated shadow for dark theme */
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); 
+            text-align: center;
+        }
+
+        .verify-icon {
+            font-size: 100px;
+            margin-bottom: 30px;
+        }
+
+        .verify-icon.success {
+            color: #28a745; /* Green */
+        }
+
+        .verify-icon.error {
+            color: #dc3545; /* Red */
+        }
+
+        .verify-icon.loading {
+            color: #667eea; /* Primary Blue */
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 {
+            font-size: 42px;
+            font-weight: 700;
+            color: #e0e0e0; /* Changed to light text */
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 20px;
+            color: #b0b0b0; /* Light gray for body text */
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn-primary {
+            /* Keep the primary accent gradient */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 18px 45px;
+            font-size: 20px;
+            font-weight: 600;
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        #verifyStatus {
+            display: none;
+        }
+
+        #verifyStatus.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .verify-container {
+                padding: 40px 30px;
+            }
+            h1 {
+                font-size: 32px;
+            }
+            p {
+                font-size: 18px;
+            }
+            .verify-icon {
+                font-size: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="verify-container">
+        <div id="loadingState">
+            <i class="fas fa-spinner verify-icon loading"></i>
+            <h1>Verifying Email...</h1>
+            <p>Please wait while we verify your email address.</p>
+        </div>
+
+        <div id="verifyStatus">
+            <i id="statusIcon" class="fas verify-icon"></i>
+            <h1 id="statusTitle"></h1>
+            <p id="statusMessage"></p>
+            <a href="login.html" class="btn-primary" id="loginButton" style="display: none;">
+                Go to Login
+            </a>
+            <a href="signup.html" class="btn-primary" id="signupButton" style="display: none;">
+                Sign Up Again
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script type="module">
+        import { db, collection, getDocs, query, where, updateDoc, doc } from '../js/firebase-config.js';
+
+        async function verifyEmail() {
+            // Get token from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+
+            console.log('🔍 Verification token:', token);
+
+            if (!token) {
+                showError('Invalid verification link. Please check your email and try again.');
+                return;
+            }
+
+            try {
+                // Find student with this token
+                console.log('📝 Searching for student with token...');
+                const studentQuery = query(
+                    collection(db, 'students'),
+                    where('verificationToken', '==', token)
+                );
+                
+                const studentSnapshot = await getDocs(studentQuery);
+
+                if (studentSnapshot.empty) {
+                    console.log('❌ No student found with this token');
+                    showError('Invalid or expired verification link. Please sign up again.');
+                    return;
+                }
+
+                // Get student document
+                const studentDoc = studentSnapshot.docs[0];
+                const studentData = studentDoc.data();
+
+                console.log('✅ Student found:', studentData.email);
+
+                // Check if already verified
+                if (studentData.emailVerified) {
+                    console.log('ℹ️ Email already verified');
+                    showSuccess('Your email is already verified! You can log in now.', true);
+                    return;
+                }
+
+                // Update student as verified
+                console.log('📧 Verifying email...');
+                await updateDoc(doc(db, 'students', studentDoc.id), {
+                    emailVerified: true,
+                    verifiedAt: new Date().toISOString()
+                });
+
+                console.log('✅ Email verified successfully!');
+                showSuccess('Email verified successfully! You can now log in to your account.', true);
+
+            } catch (error) {
+                console.error('❌ Verification error:', error);
+                showError('Verification failed. Please try again or contact support.');
+            }
+        }
+
+        function showSuccess(message, showLogin = false) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('verifyStatus').classList.add('show');
+            document.getElementById('statusIcon').className = 'fas fa-check-circle verify-icon success';
+            document.getElementById('statusTitle').textContent = 'Email Verified!';
+            document.getElementById('statusMessage').textContent = message;
+            
+            if (showLogin) {
+                document.getElementById('loginButton').style.display = 'inline-block';
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('verifyStatus').classList.add('show');
+            document.getElementById('statusIcon').className = 'fas fa-exclamation-circle verify-icon error';
+            document.getElementById('statusTitle').textContent = 'Verification Failed';
+            document.getElementById('statusMessage').textContent = message;
+            document.getElementById('signupButton').style.display = 'inline-block';
+        }
+
+        // Run verification when page loads
+        verifyEmail();
+    </script>
+</body>
+</html>

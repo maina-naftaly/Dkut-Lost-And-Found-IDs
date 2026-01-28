@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- GLOBAL STYLES --- */
+        :root {
+            --dkut-green: #1e5631;
+            --dkut-light-green: #4c9c6b;
+            --dkut-gold: #d4af37;
+            --color-bg-light: #ffffff;
+            --color-bg-card: #f8f9fa;
+            --color-text-dark: #333333;
+            --color-text-secondary: #6c757d;
+            --color-primary-blue: #007bff;
+            --color-accent-green: #28a745;
+            --color-accent-red: #dc3545;
+            --color-border: rgba(0, 0, 0, 0.08);
+            --color-card-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: url('../images/back.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: var(--color-text-dark);
+            font-size: 16px;
+            display: flex;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            background: var(--dkut-green);
+            width: 280px;
+            min-height: 100vh;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-brand {
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-brand {
+            opacity: 0;
+            width: 0;
+        }
+        
+        .sidebar-brand i {
+            color: var(--dkut-gold);
+            margin-right: 10px;
+        }
+        
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0 20px;
+        }
+
+        .sidebar.collapsed .sidebar-nav {
+            padding: 0 10px;
+        }
+        
+        .sidebar-nav-item {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .sidebar-nav-link {
+            padding: 15px;
+            justify-content: center;
+        }
+        
+        .sidebar-nav-link:hover,
+        .sidebar-nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .sidebar-nav-link i {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+            transition: margin 0.3s ease;
+        }
+
+        .sidebar:not(.collapsed) .sidebar-nav-link i {
+            margin-right: 12px;
+        }
+
+        .sidebar.collapsed .sidebar-nav-link i {
+            margin-right: 0;
+            font-size: 20px;
+        }
+
+        .nav-text {
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .sidebar-logout {
+            margin-top: 30px;
+            padding: 0 20px;
+        }
+
+        .sidebar.collapsed .sidebar-logout {
+            padding: 0 10px;
+        }
+        
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            text-align: left;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .btn-logout {
+            padding: 12px;
+            justify-content: center;
+        }
+        
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-logout i {
+            transition: margin 0.3s ease;
+        }
+
+        .sidebar:not(.collapsed) .btn-logout i {
+            margin-right: 10px;
+        }
+
+        .logout-text {
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+        .sidebar.collapsed .logout-text {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        }
+        
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+            position: relative;
+            transition: all 0.3s ease;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                        url('../images/back.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        body.sidebar-collapsed .main-content {
+            margin-left: 80px;
+        }
+
+        /* Add overlay for readability */
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.92);
+            z-index: -1;
+            margin: 10px;
+        }
+        
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            padding: 15px 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .top-bar-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .icon-container {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--color-border);
+        }
+
+        .icon-container:hover {
+            background: var(--dkut-green);
+            border-color: var(--dkut-green);
+        }
+
+        .icon-container:hover i {
+            color: white;
+        }
+
+        .icon-container i {
+            font-size: 20px;
+            color: var(--color-text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        /* Profile Badge for status indicator */
+        .profile-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            background: var(--color-accent-green);
+            color: white;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            border: 2px solid white;
+            display: none;
+        }
+
+        .profile-badge.lost {
+            background: var(--color-accent-red);
+        }
+
+        .profile-badge.found {
+            background: var(--color-accent-green);
+        }
+        
+        .user-welcome {
+            background: var(--dkut-green);
+            color: white;
+            padding: 30px 40px;
+            margin-bottom: 0;
+        }
+        
+        .user-welcome h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .user-welcome p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        
+/* 🎉 NEW: Modern Found ID Notification */
+.found-notification {
+    background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+    border: 2px solid var(--color-accent-green);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px auto 30px auto;
+    box-shadow: 0 6px 25px rgba(72, 187, 120, 0.2), 
+                0 2px 8px rgba(72, 187, 120, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    display: none;
+    animation: slideInDown 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    max-width: 800px;
+    position: relative;
+    overflow: hidden;
+}
+
+.found-notification::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-accent-green), var(--dkut-light-green));
+}
+
+.found-notification::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(72, 187, 120, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-25px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.found-notification-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.found-notification-icon {
+    font-size: 36px;
+    color: var(--color-accent-green);
+    background: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+    flex-shrink: 0;
+    border: 3px solid rgba(72, 187, 120, 0.2);
+}
+
+.found-notification-details {
+    flex: 1;
+}
+
+.found-notification h3 {
+    color: var(--dkut-green);
+    margin-bottom: 8px;
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.found-notification h3::before {
+    content: '🎉';
+    font-size: 22px;
+}
+
+.found-notification p {
+    color: #2d3748;
+    margin-bottom: 15px;
+    font-size: 15px;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.collect-instructions {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 16px;
+    border-radius: 12px;
+    margin: 15px 0;
+    border: 1px solid rgba(72, 187, 120, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+.collect-instructions h5 {
+    color: var(--dkut-green);
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.collect-instructions ul {
+    padding-left: 0;
+    margin: 12px 0;
+    list-style: none;
+}
+
+.collect-instructions li {
+    margin-bottom: 8px;
+    color: #4a5568;
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 4px 0;
+}
+
+.collect-instructions li::before {
+    content: '✓';
+    color: var(--color-accent-green);
+    font-weight: bold;
+    font-size: 12px;
+    background: rgba(72, 187, 120, 0.1);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Notification Actions */
+.notification-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(72, 187, 120, 0.2);
+}
+
+.action-hint {
+    font-size: 13px;
+    color: #718096;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.action-hint i {
+    color: var(--color-accent-green);
+}
+
+/* Success animation for collection */
+.collected-success {
+    animation: successPulse 0.5s ease-in-out;
+}
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+
+
+
+        
+        /* Dashboard Container */
+        .dashboard-container {
+            padding: 0 40px 40px 40px;
+        }
+        
+        /* ID Status Card (Hidden by default, shown when profile icon clicked) */
+        .id-status-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px var(--color-card-shadow);
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: none; /* Hidden by default */
+        }
+        
+        .id-status-card.show {
+            display: block;
+        }
+        
+        .id-status-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--color-text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-content {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .status-content.safe {
+            background: #e8f5e8;
+            border-left: 4px solid var(--color-accent-green);
+        }
+        
+        .status-content.lost {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .status-content.found {
+            background: #d1e7dd;
+            border-left: 4px solid var(--color-accent-green);
+        }
+        
+        .status-content i {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        
+        .status-text {
+            font-size: 17px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .status-details {
+            font-size: 15px;
+            color: var(--color-text-secondary);
+            margin-top: 10px;
+        }
+        
+        .status-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        /* Profile Details Card (Shown when profile icon clicked) */
+        .profile-details-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px var(--color-card-shadow);
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: none; /* Hidden by default */
+        }
+        
+        .profile-details-card.show {
+            display: block;
+        }
+        
+        .profile-details-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--color-text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .profile-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--dkut-green);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(30, 86, 49, 0.1);
+        }
+        
+        .form-input:read-only {
+            background: #f0f0f0;
+            cursor: not-allowed;
+            border-color: #ddd;
+        }
+        
+        .form-input.editable {
+            background: white;
+            cursor: text;
+            border-color: #e0e0e0;
+        }
+        
+        .edit-btn {
+            background: #6c757d;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 5px;
+        }
+        
+        .edit-btn:hover {
+            background: #545b62;
+        }
+        
+        .save-btn {
+            background: var(--dkut-green);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 5px;
+        }
+        
+        .save-btn:hover {
+            background: var(--dkut-light-green);
+        }
+        
+        .cancel-btn {
+            background: #dc3545;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 5px;
+            margin-left: 10px;
+        }
+        
+        .cancel-btn:hover {
+            background: #c82333;
+        }
+        
+        /* Change Password Section */
+        .change-password-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            margin-top: 30px;
+        }
+        
+        .change-password-section h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--color-text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .password-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .btn-change-password {
+            background: var(--dkut-gold);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-change-password:hover {
+            background: #c49a2b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        
+        /* Quick Actions Cards (Hidden when profile is shown) */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .action-card {
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px var(--color-card-shadow);
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--color-primary-blue);
+        }
+        
+        .action-card i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            transition: color 0.3s;
+        }
+        
+        /* Card Specific Styling */
+        .action-card.report-lost i {
+            color: var(--color-accent-red);
+        }
+        
+        .action-card.upload-found i {
+            color: var(--color-primary-blue);
+        }
+        
+        .action-card h4 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--color-text-dark);
+        }
+        
+        .action-card p {
+            font-size: 15px;
+            color: var(--color-text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        /* Action Buttons */
+        .btn-action {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+        
+        .btn-report {
+            background: var(--color-accent-red);
+        }
+        
+        .btn-report:hover {
+            background: #a92736;
+        }
+        
+        .btn-cancel {
+            background: #6c757d;
+        }
+        
+        .btn-cancel:hover {
+            background: #545b62;
+        }
+        
+        .btn-collect {
+            background: var(--color-accent-green);
+        }
+        
+        .btn-collect:hover {
+            background: #1e7e34;
+        }
+        
+        .btn-upload {
+            background: var(--color-primary-blue);
+        }
+        
+        .btn-upload:hover {
+            background: #0056b3;
+        }
+        
+        /* Recent Activity */
+        .recent-activity {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px var(--color-card-shadow);
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .recent-activity h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--color-text-dark);
+        }
+        
+        .activity-item {
+            padding: 15px;
+            border-left: 3px solid var(--color-primary-blue);
+            background: white;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .activity-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .activity-date {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            margin-bottom: 5px;
+        }
+        
+        .activity-text {
+            font-size: 15px;
+            color: var(--color-text-dark);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--color-text-secondary);
+        }
+        
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 250px;
+            }
+
+            .sidebar.collapsed {
+                width: 80px;
+            }
+            
+            .main-content {
+                margin-left: 250px;
+            }
+
+            body.sidebar-collapsed .main-content {
+                margin-left: 80px;
+            }
+            
+            .found-notification {
+                padding: 25px 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                position: relative;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .sidebar.collapsed {
+                width: 100%;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+
+            body.sidebar-collapsed .main-content {
+                margin-left: 0;
+            }
+            
+            .dashboard-container {
+                padding: 0 20px 20px 20px;
+            }
+            
+            .user-welcome h1 {
+                font-size: 28px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .password-form {
+                grid-template-columns: 1fr;
+            }
+
+            .top-bar {
+                padding: 15px 20px;
+            }
+            
+            .found-notification {
+                padding: 20px;
+                margin: 0 20px 20px 20px;
+            }
+            
+            .found-notification-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <i class="fas fa-id-card"></i> DeKUT Lost & Found ID
+            </div>
+            <button class="toggle-btn" id="toggleSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link active" href="dashboard.html">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link" href="report-lost.html">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span class="nav-text">Report Lost</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link" href="upload-found.html">
+                    <i class="fas fa-camera"></i>
+                    <span class="nav-text">Upload Found</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-logout">
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="logout-text">Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar with Profile Icon Only -->
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="header-icons">
+                    <div class="icon-container profile-icon" id="profileIcon">
+                        <i class="fas fa-user-circle"></i>
+                        <div class="profile-badge" id="profileBadge"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Welcome Section -->
+        <div class="user-welcome">
+            <h1>Welcome back, <span id="userName">Student</span>! 👋</h1>
+            <p>Manage your ID card status and help others find their lost IDs</p>
+        </div>
+        
+        <!-- 🎉 Found ID Notification (Below Welcome Section) -->
+<div class="found-notification" id="foundNotification">
+    <div class="found-notification-content">
+        <div class="found-notification-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="found-notification-details">
+            <h3>Your ID Has Been Found!</h3>
+            <p>Great news! Your student ID card has been found and is waiting for you at the Security Office.</p>
+            
+            <div class="collect-instructions">
+                <h5><i class="fas fa-map-marker-alt"></i> Collection Details</h5>
+                <ul>
+                    <li><strong>Location:</strong> Security Office (Resource Centre)</li>
+                    <li><strong>Hours:</strong> Monday-Friday, 8:00 AM - 5:00 PM</li>
+                    
+                </ul>
+            </div>
+            
+            <div class="notification-actions">
+                <button class="btn-action btn-collect" id="markAsCollectedBtn">
+                    <i class="fas fa-check-circle"></i> Mark as Collected
+                </button>
+                <p class="action-hint">
+                    <i class="fas fa-info-circle"></i> Click after collecting your ID from Security Office
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+        <div class="dashboard-container">
+            <!-- ID Status Card (Hidden by default, shown when profile icon clicked) -->
+            <div class="id-status-card" id="idStatusCard">
+                <h3><i class="fas fa-id-card"></i> ID Status</h3>
+                <div class="status-content" id="statusContent">
+                    <!-- Content will be dynamically updated -->
+                </div>
+                <div class="status-actions" id="statusActions">
+                    <!-- Buttons will be dynamically updated -->
+                </div>
+            </div>
+
+            <!-- Profile Details Section (Hidden by default, shown when profile icon clicked) -->
+            <div class="profile-details-card" id="profileDetailsCard">
+                <h3><i class="fas fa-user-circle"></i> Profile Details</h3>
+                
+                <form id="profileForm" class="profile-form">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" id="profileFullName" value="" readonly>
+                        <button type="button" class="edit-btn" onclick="enableEdit('profileFullName')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button type="button" class="save-btn" onclick="saveField('profileFullName', 'fullName')" style="display: none;">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button type="button" class="cancel-btn" onclick="cancelEdit('profileFullName')" style="display: none;">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Registration Number</label>
+                        <input type="text" class="form-input" id="profileRegNumber" value="" readonly>
+                        <small style="color: #6c757d; font-size: 12px; display: block; margin-top: 5px;">Registration number cannot be changed</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" id="profileEmail" value="" readonly>
+                        <button type="button" class="edit-btn" onclick="enableEdit('profileEmail')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button type="button" class="save-btn" onclick="saveField('profileEmail', 'email')" style="display: none;">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button type="button" class="cancel-btn" onclick="cancelEdit('profileEmail')" style="display: none;">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-input" id="profilePhone" value="" readonly>
+                        <button type="button" class="edit-btn" onclick="enableEdit('profilePhone')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button type="button" class="save-btn" onclick="saveField('profilePhone', 'phone')" style="display: none;">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button type="button" class="cancel-btn" onclick="cancelEdit('profilePhone')" style="display: none;">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">School/Faculty</label>
+                        <input type="text" class="form-input" id="profileSchool" value="" readonly>
+                        <button type="button" class="edit-btn" onclick="enableEdit('profileSchool')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button type="button" class="save-btn" onclick="saveField('profileSchool', 'school')" style="display: none;">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button type="button" class="cancel-btn" onclick="cancelEdit('profileSchool')" style="display: none;">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Change Password Section -->
+                <div class="change-password-section">
+                    <h4><i class="fas fa-key"></i> Change Password</h4>
+                    <form id="changePasswordForm" class="password-form">
+                        <div class="form-group">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-input" id="currentPassword" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-input" id="newPassword" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-input" id="confirmPassword" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn-change-password">
+                                <i class="fas fa-lock"></i> Change Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Quick Actions (Hidden when profile is shown) -->
+            <div class="quick-actions" id="quickActions">
+                <div class="action-card report-lost" onclick="window.location.href='report-lost.html'">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h4>Report Lost ID</h4>
+                    <p>Lost your student ID card? Report it here and we'll notify you when it's found.</p>
+                    <button class="btn-action btn-report" onclick="window.location.href='report-lost.html'">Report Lost ID</button>
+                </div>
+
+                <div class="action-card upload-found" onclick="window.location.href='upload-found.html'">
+                    <i class="fas fa-camera"></i>
+                    <h4>Found an ID?</h4>
+                    <p>Help a fellow student by uploading a photo of the ID you found.</p>
+                    <button class="btn-action btn-upload" onclick="window.location.href='upload-found.html'">Upload ID Photo</button>
+                </div>
+            </div>
+
+            <!-- Recent Activity (Hidden when profile is shown) -->
+            <div class="recent-activity" id="recentActivity">
+                <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                <div id="activityList">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No recent activity</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Global state variables
+        let currentUserStatus = 'safe'; // 'safe', 'lost', 'found'
+        let showingStatusCard = false;
+        let showingProfile = false;
+        let userRegistrationNumber = '';
+        let originalValues = {}; // Store original values for cancel
+        let foundUploadDocument = null; // Store the found upload document
+        let notificationShown = false; // Track if notification has been shown
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle functionality
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('toggleSidebar');
+            const body = document.body;
+
+            toggleBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                body.classList.toggle('sidebar-collapsed');
+            });
+
+            // Profile icon click handler
+            const profileIcon = document.getElementById('profileIcon');
+            profileIcon.addEventListener('click', function() {
+                toggleProfileView();
+            });
+
+            // Mark as collected button handler
+            document.getElementById('markAsCollectedBtn').addEventListener('click', markAsCollected);
+
+            // Load user data and check for found ID
+            loadUserData();
+            
+            // Change password form handler
+            document.getElementById('changePasswordForm').addEventListener('submit', handleChangePassword);
+        });
+
+        // Toggle between profile view and dashboard view
+        function toggleProfileView() {
+            const idStatusCard = document.getElementById('idStatusCard');
+            const profileDetailsCard = document.getElementById('profileDetailsCard');
+            const quickActions = document.getElementById('quickActions');
+            const recentActivity = document.getElementById('recentActivity');
+            
+            showingProfile = !showingProfile;
+            
+            if (showingProfile) {
+                // Show profile view
+                idStatusCard.style.display = 'block';
+                idStatusCard.classList.add('show');
+                profileDetailsCard.style.display = 'block';
+                profileDetailsCard.classList.add('show');
+                quickActions.style.display = 'none';
+                recentActivity.style.display = 'none';
+                
+                // Load profile data
+                loadProfileData();
+            } else {
+                // Show dashboard view
+                idStatusCard.style.display = 'none';
+                idStatusCard.classList.remove('show');
+                profileDetailsCard.style.display = 'none';
+                profileDetailsCard.classList.remove('show');
+                quickActions.style.display = 'grid';
+                recentActivity.style.display = 'block';
+            }
+        }
+
+        // Load profile data
+        async function loadProfileData() {
+            try {
+                // Get user info from session storage
+                const userName = sessionStorage.getItem('userName') || '';
+                const userReg = sessionStorage.getItem('userReg') || '';
+                const userEmail = sessionStorage.getItem('userEmail') || '';
+                
+                // Set basic info
+                document.getElementById('profileFullName').value = userName;
+                document.getElementById('profileRegNumber').value = userReg;
+                document.getElementById('profileEmail').value = userEmail;
+                
+                // Load additional info from Firebase
+                if (userReg) {
+                    try {
+                        const firebaseConfig = await import('../js/firebase-config.js');
+                        const { db, collection, query, where, getDocs } = firebaseConfig;
+                        
+                        const studentQuery = query(
+                            collection(db, 'students'),
+                            where('regNumber', '==', userReg)
+                        );
+                        
+                        const studentSnapshot = await getDocs(studentQuery);
+                        
+                        if (!studentSnapshot.empty) {
+                            const studentData = studentSnapshot.docs[0].data();
+                            document.getElementById('profilePhone').value = studentData.phone || 'Not set';
+                            document.getElementById('profileSchool').value = studentData.school || 'Not set';
+                        }
+                    } catch (error) {
+                        console.error("Error loading profile data:", error);
+                    }
+                }
+                
+            } catch (error) {
+                console.error("Error loading profile data:", error);
+            }
+        }
+
+        // Enable editing for a field
+        function enableEdit(fieldId) {
+            const field = document.getElementById(fieldId);
+            const editBtn = field.nextElementSibling;
+            const saveBtn = editBtn.nextElementSibling;
+            const cancelBtn = saveBtn.nextElementSibling;
+            
+            // Store original value
+            originalValues[fieldId] = field.value;
+            
+            // Make field editable
+            field.readOnly = false;
+            field.classList.add('editable');
+            field.focus();
+            
+            // Show save/cancel buttons, hide edit button
+            editBtn.style.display = 'none';
+            saveBtn.style.display = 'inline-block';
+            cancelBtn.style.display = 'inline-block';
+        }
+
+        // Cancel editing
+        function cancelEdit(fieldId) {
+            const field = document.getElementById(fieldId);
+            const editBtn = field.nextElementSibling;
+            const saveBtn = editBtn.nextElementSibling;
+            const cancelBtn = saveBtn.nextElementSibling;
+            
+            // Restore original value
+            if (originalValues[fieldId]) {
+                field.value = originalValues[fieldId];
+            }
+            
+            // Make field read-only
+            field.readOnly = true;
+            field.classList.remove('editable');
+            
+            // Show edit button, hide save/cancel buttons
+            editBtn.style.display = 'inline-block';
+            saveBtn.style.display = 'none';
+            cancelBtn.style.display = 'none';
+            
+            // Remove from original values
+            delete originalValues[fieldId];
+        }
+
+        // Save field to Firebase
+        async function saveField(fieldId, fieldName) {
+            const field = document.getElementById(fieldId);
+            const value = field.value.trim();
+            const userReg = sessionStorage.getItem('userReg');
+            
+            if (!value) {
+                alert('Please enter a value');
+                field.focus();
+                return;
+            }
+            
+            try {
+                const firebaseConfig = await import('../js/firebase-config.js');
+                const { db, collection, query, where, getDocs, updateDoc, doc } = firebaseConfig;
+                
+                // Find student document
+                const studentQuery = query(
+                    collection(db, 'students'),
+                    where('regNumber', '==', userReg)
+                );
+                
+                const studentSnapshot = await getDocs(studentQuery);
+                
+                if (!studentSnapshot.empty) {
+                    const studentDoc = studentSnapshot.docs[0];
+                    
+                    // Update in Firebase
+                    await updateDoc(doc(db, 'students', studentDoc.id), {
+                        [fieldName]: value,
+                        lastUpdated: new Date().toISOString()
+                    });
+                    
+                    console.log(`✅ Updated ${fieldName} to:`, value);
+                    
+                    // Update session storage for name
+                    if (fieldName === 'fullName') {
+                        sessionStorage.setItem('userName', value);
+                        document.getElementById('userName').textContent = value.split(' ')[0];
+                    }
+                    
+                    // Update session storage for email
+                    if (fieldName === 'email') {
+                        sessionStorage.setItem('userEmail', value);
+                    }
+                    
+                    // Update session storage for phone
+                    if (fieldName === 'phone') {
+                        sessionStorage.setItem('userPhone', value);
+                    }
+                    
+                    // Show success
+                    alert('Profile updated successfully!');
+                    
+                    // Make field read-only again
+                    field.readOnly = true;
+                    field.classList.remove('editable');
+                    
+                    // Show edit button, hide save/cancel buttons
+                    const editBtn = field.nextElementSibling;
+                    const saveBtn = editBtn.nextElementSibling;
+                    const cancelBtn = saveBtn.nextElementSibling;
+                    
+                    editBtn.style.display = 'inline-block';
+                    saveBtn.style.display = 'none';
+                    cancelBtn.style.display = 'none';
+                    
+                    // Remove from original values
+                    delete originalValues[fieldId];
+                    
+                } else {
+                    alert('Error: Student record not found');
+                }
+                
+            } catch (error) {
+                console.error("Error saving field:", error);
+                alert('Error updating profile. Please try again.');
+            }
+        }
+
+        // Handle change password
+        async function handleChangePassword(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validation
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Please fill in all password fields');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                alert('New password must be at least 6 characters long');
+                return;
+            }
+            
+            try {
+                // Here you would implement password change logic
+                // This would typically involve:
+                // 1. Verifying current password with your authentication system
+                // 2. Updating to new password
+                
+                // For now, we'll show a success message
+                alert('Password change functionality would be implemented here.\n\nIn a real system, this would:\n1. Verify your current password\n2. Update to the new password\n3. Log you out to re-login with new password');
+                
+                // Reset form
+                document.getElementById('changePasswordForm').reset();
+                
+            } catch (error) {
+                console.error("Error changing password:", error);
+                alert('Error changing password. Please try again.');
+            }
+        }
+
+        // Load user data and check for found ID
+        async function loadUserData() {
+            try {
+                // Get user info from session storage
+                const userName = sessionStorage.getItem('userName') || 'Student';
+                const userReg = sessionStorage.getItem('userReg') || '';
+                userRegistrationNumber = userReg;
+                
+                document.getElementById('userName').textContent = userName.split(' ')[0];
+                
+                // Check if user's ID is in foundUploads collection
+                if (userReg) {
+                    foundUploadDocument = await checkForFoundUploads(userReg);
+                    
+                    if (foundUploadDocument) {
+                        // Show found notification
+                        showFoundNotification();
+                        
+                        // Update status to found
+                        currentUserStatus = 'found';
+                        notificationShown = true;
+                        
+                        // Add to recent activity
+                        addActivity('Your ID was found! Check notification for collection details.');
+                    } else {
+                        currentUserStatus = 'safe';
+                        notificationShown = false;
+                    }
+                }
+                
+                // Update UI based on status
+                updateStatusCard();
+                
+                // Load recent activities from session storage
+                const savedActivities = JSON.parse(sessionStorage.getItem('recentActivities') || '[]');
+                if (savedActivities.length > 0) {
+                    const activityList = document.getElementById('activityList');
+                    activityList.innerHTML = '';
+                    savedActivities.forEach(activity => {
+                        activityList.innerHTML += `
+                            <div class="activity-item">
+                                <div class="activity-date">${activity.date}</div>
+                                <div class="activity-text">${activity.text}</div>
+                            </div>
+                        `;
+                    });
+                }
+                
+            } catch (error) {
+                console.error("Error loading user data:", error);
+            }
+        }
+
+        // Check for found uploads in Firebase
+        async function checkForFoundUploads(regNumber) {
+            if (!regNumber) return null;
+            
+            try {
+                // Dynamically import Firebase modules
+                const firebaseConfig = await import('../js/firebase-config.js');
+                const { db, collection, query, where, getDocs } = firebaseConfig;
+                
+                // Check if ID has been uploaded as found
+                const foundUploadsQuery = query(
+                    collection(db, 'foundUploads'),
+                    where('extractedAdmission', '==', regNumber),
+                    where('status', 'in', ['pending', 'found'])
+                );
+                
+                const foundUploadsSnapshot = await getDocs(foundUploadsQuery);
+                
+                if (!foundUploadsSnapshot.empty) {
+                    const foundDoc = foundUploadsSnapshot.docs[0];
+                    const foundData = foundDoc.data();
+                    
+                    console.log("📋 Found ID in foundUploads:", foundData);
+                    
+                    // Return the document reference and data
+                    return {
+                        id: foundDoc.id,
+                        data: foundData
+                    };
+                }
+                
+                return null;
+                
+            } catch (error) {
+                console.error("Error checking found uploads:", error);
+                return null;
+            }
+        }
+
+        // Show found notification
+        function showFoundNotification() {
+            const notification = document.getElementById('foundNotification');
+            const profileBadge = document.getElementById('profileBadge');
+            
+            // Update profile badge
+            profileBadge.style.display = 'block';
+            profileBadge.className = 'profile-badge found';
+            
+            // Show notification
+            notification.style.display = 'block';
+            
+            // Also update the status card
+            updateStatusCard();
+        }
+
+        // Update status card content
+        function updateStatusCard() {
+            const statusContent = document.getElementById('statusContent');
+            const statusActions = document.getElementById('statusActions');
+            
+            if (currentUserStatus === 'safe') {
+                statusContent.className = 'status-content safe';
+                statusContent.innerHTML = `
+                    <div style="display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: var(--color-accent-green);"></i>
+                        <div>
+                            <div class="status-text">✅ Your ID is safe with you.</div>
+                            <div class="status-details">No active reports or notifications.</div>
+                        </div>
+                    </div>
+                `;
+                
+                statusActions.innerHTML = `
+                    <button class="btn-action btn-report" onclick="window.location.href='report-lost.html'">
+                        <i class="fas fa-exclamation-triangle"></i> Report Lost
+                    </button>
+                `;
+                
+            } else if (currentUserStatus === 'found') {
+                statusContent.className = 'status-content found';
+                statusContent.innerHTML = `
+                    <div style="display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: var(--color-accent-green);"></i>
+                        <div>
+                            <div class="status-text">🎉 Your ID has been found!</div>
+                            <div class="status-details">
+                                Collect your ID from the Security Office, Main Campus.<br>
+                                Please bring your student registration number for verification.
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                statusActions.innerHTML = `
+                    <button class="btn-action btn-collect" onclick="markAsCollected()">
+                        <i class="fas fa-check"></i> Mark as Collected
+                    </button>
+                `;
+            }
+        }
+
+        // Mark ID as collected - TRANSFERS FROM foundUploads TO collectedIDs
+        async function markAsCollected() {
+            if (confirm('Have you collected your ID from the Security Office?')) {
+                const submitBtn = document.getElementById('markAsCollectedBtn');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitBtn.disabled = true;
+                
+                try {
+                    if (!foundUploadDocument) {
+                        throw new Error('No found upload document available');
+                    }
+                    
+                    const firebaseConfig = await import('../js/firebase-config.js');
+                    const { db, collection, addDoc, deleteDoc, doc } = firebaseConfig;
+                    
+                    // 1. Save to collectedIDs collection
+                    const collectedData = {
+                        admissionNumber: userRegistrationNumber,
+                        studentName: sessionStorage.getItem('userName'),
+                        collectedDate: new Date().toISOString(),
+                        collectedBy: sessionStorage.getItem('userId'),
+                        finderName: foundUploadDocument.data.finderName || 'Unknown',
+                        finderPhone: foundUploadDocument.data.finderPhone || 'Not provided',
+                        locationFound: foundUploadDocument.data.locationFound || 'Unknown',
+                        originalFoundDate: foundUploadDocument.data.uploadDate || foundUploadDocument.data.timestamp,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    await addDoc(collection(db, 'collectedIDs'), collectedData);
+                    console.log("✅ Saved to collectedIDs collection");
+                    
+                    // 2. Delete from foundUploads collection
+                    await deleteDoc(doc(db, 'foundUploads', foundUploadDocument.id));
+                    console.log("✅ Deleted from foundUploads collection");
+                    
+                    // 3. Update UI - Notification disappears forever
+                    document.getElementById('foundNotification').style.display = 'none';
+                    currentUserStatus = 'safe';
+                    updateStatusCard();
+                    
+                    // Update profile badge
+                    const profileBadge = document.getElementById('profileBadge');
+                    profileBadge.style.display = 'none';
+                    
+                    // 4. Add activity
+                    addActivity('Collected ID from Security Office');
+                    
+                    // 5. Clear found upload document and mark notification as shown
+                    foundUploadDocument = null;
+                    notificationShown = false;
+                    
+                    alert('✅ ID marked as collected. Thank you for using the system!');
+                    
+                } catch (error) {
+                    console.error("Error marking as collected:", error);
+                    alert('❌ Error marking ID as collected. Please try again.');
+                } finally {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+        }
+
+        // Add activity to recent activity list
+        function addActivity(activityText) {
+            const activityList = document.getElementById('activityList');
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            // Remove empty state if it exists
+            const emptyState = activityList.querySelector('.empty-state');
+            if (emptyState) {
+                activityList.innerHTML = '';
+            }
+            
+            // Add new activity at the top
+            activityList.innerHTML = `
+                <div class="activity-item">
+                    <div class="activity-date">${dateStr}</div>
+                    <div class="activity-text">${activityText}</div>
+                </div>
+            ` + activityList.innerHTML;
+            
+            // Save to session storage
+            saveActivitiesToSession();
+        }
+
+        // Save activities to session storage
+        function saveActivitiesToSession() {
+            const activityItems = document.querySelectorAll('.activity-item');
+            const activities = [];
+            
+            activityItems.forEach(item => {
+                const date = item.querySelector('.activity-date').textContent;
+                const text = item.querySelector('.activity-text').textContent;
+                activities.push({ date, text });
+            });
+            
+            sessionStorage.setItem('recentActivities', JSON.stringify(activities));
+        }
+
+        // Logout function
+        function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        sessionStorage.clear();
+        
+        // Get the current origin (http://localhost:5000)
+        const baseUrl = window.location.origin;
+        
+        // Construct the absolute URL
+        window.location.href = baseUrl + '/pages/login.html';
+        
+        // OR if your server serves from 'pages/' folder directly:
+        // window.location.href = baseUrl + '/login.html';
+    }
+}
+        // Periodically check for found uploads (every 30 seconds)
+        // Only checks if notification hasn't been shown yet
+        setInterval(async () => {
+            if (userRegistrationNumber && !notificationShown) {
+                const foundDoc = await checkForFoundUploads(userRegistrationNumber);
+                if (foundDoc) {
+                    foundUploadDocument = foundDoc;
+                    showFoundNotification();
+                    currentUserStatus = 'found';
+                    updateStatusCard();
+                    notificationShown = true;
+                    addActivity('Your ID was found! Check notification for collection details.');
+                }
+            }
+        }, 30000);
+
+        // Initial check after 2 seconds
+        setTimeout(async () => {
+            if (userRegistrationNumber && !notificationShown) {
+                const foundDoc = await checkForFoundUploads(userRegistrationNumber);
+                if (foundDoc) {
+                    foundUploadDocument = foundDoc;
+                    showFoundNotification();
+                    currentUserStatus = 'found';
+                    updateStatusCard();
+                    notificationShown = true;
+                }
+            }
+        }, 2000);
+    </script>
+
+    <script>
+
+(function() {
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    const userRole = sessionStorage.getItem('userRole');
+    
+    if (!isLoggedIn || userRole !== 'student') {
+        // If opened directly without login, redirect immediately
+        window.location.replace('/pages/login.html');
+    }
+})();
+</script>
+</body>
+</html>

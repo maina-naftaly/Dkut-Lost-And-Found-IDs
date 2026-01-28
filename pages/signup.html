@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Signup - DeKUT Lost & Found ID</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    
+    <style>
+        /* --- DKUT THEME VARIABLES --- */
+        :root {
+            --dkut-green: #1e5631;
+            --dkut-light-green: #4c9c6b;
+            --dkut-gold: #d4af37;
+            --color-bg-light: #ffffff;
+            --color-bg-card: #f8f9fa;
+            --color-text-dark: #333333;
+            --color-text-secondary: #6c757d;
+            --color-border: rgba(0, 0, 0, 0.08);
+            --color-card-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0.4, 0, 0, 0.4)),
+                        url('../images/back.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-dark);
+            padding: 15px;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(30, 86, 49, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(76, 156, 107, 0.05) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .signup-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--color-bg-light);
+            border-radius: 20px;
+            padding: 30px 25px;
+            box-shadow: 0 20px 60px rgba(30, 86, 49, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            margin: 20px auto;
+        }
+
+        /* Decorative Elements */
+        .signup-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--dkut-green), var(--dkut-gold));
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--dkut-green), var(--dkut-light-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 8px 25px rgba(30, 86, 49, 0.3);
+        }
+
+        .logo-icon i {
+            font-size: 32px;
+            color: white;
+        }
+
+        .signup-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dkut-green);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .signup-header p {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Step Indicator */
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 25px;
+        }
+        
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .step-dot.active {
+            background: var(--dkut-green);
+            width: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(30, 86, 49, 0.3);
+        }
+
+        /* Form Elements */
+        .step-container {
+            display: none;
+        }
+        
+        .step-container.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text-dark);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dkut-green);
+            z-index: 2;
+            font-size: 14px;
+        }
+
+        .form-control, .form-select {
+            font-size: 14px;
+            padding: 10px 15px 10px 40px;
+            background: var(--color-bg-light);
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            color: var(--color-text-dark);
+            transition: all 0.3s ease;
+            width: 100%;
+            height: 45px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--dkut-green);
+            box-shadow: 0 0 0 3px rgba(30, 86, 49, 0.1);
+            background: var(--color-bg-light);
+            color: var(--color-text-dark);
+        }
+
+        .form-control::placeholder {
+            color: var(--color-text-secondary);
+            opacity: 0.6;
+            font-size: 13px;
+        }
+
+        /* Remove dropdown icon from School/Faculty select */
+        #school {
+            background-image: none !important;
+            padding-right: 15px;
+        }
+
+        .helper-text {
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            margin-top: 4px;
+            display: block;
+            line-height: 1.3;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            height: 3px;
+            border-radius: 1.5px;
+            background: #e0e0e0;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            border-radius: 1.5px;
+            transition: all 0.3s ease;
+        }
+
+        .strength-weak { background: #dc3545; width: 25%; }
+        .strength-fair { background: #fd7e14; width: 50%; }
+        .strength-good { background: #ffc107; width: 75%; }
+        .strength-strong { background: #28a745; width: 100%; }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--dkut-green), var(--dkut-light-green));
+            border: none;
+            padding: 12px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            margin-top: 5px;
+            box-shadow: 0 4px 15px rgba(30, 86, 49, 0.3);
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 86, 49, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #e0e0e0;
+            background: transparent;
+            color: var(--color-text-secondary);
+            padding: 11px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #f8f9fa;
+            color: var(--dkut-green);
+            border-color: var(--dkut-green);
+        }
+
+        .d-grid {
+            display: grid;
+        }
+        
+        .gap-3 {
+            gap: 12px;
+        }
+
+        /* Verification Success Section */
+        .verification-box {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .verification-box i {
+            font-size: 60px;
+            color: var(--dkut-green);
+            margin-bottom: 20px;
+        }
+        
+        .verification-box h2 {
+            font-size: 22px;
+            color: var(--dkut-green);
+            margin-bottom: 12px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        
+        .verification-box p {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        
+        .verification-box strong {
+            color: var(--dkut-green);
+            font-size: 16px;
+            display: block;
+            margin: 8px 0;
+            word-break: break-all;
+            padding: 0 5px;
+        }
+
+        /* Links */
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.4;
+        }
+
+        .login-link a {
+            color: var(--dkut-green);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: var(--dkut-light-green);
+            text-decoration: underline;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-home a {
+            color: var(--color-text-secondary);
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .back-home a:hover {
+            color: var(--dkut-green);
+        }
+
+        /* Alert Styling */
+        .alert {
+            margin-top: 15px;
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .alert-danger {
+            background: #fde8e8;
+            color: #dc3545;
+        }
+
+        .alert-success {
+            background: #e8f5e8;
+            color: var(--dkut-light-green);
+        }
+
+        .alert-info {
+            background: #e8f4ff;
+            color: var(--dkut-green);
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .alert i {
+            margin-right: 8px;
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .alert-info a {
+            color: var(--dkut-green);
+            font-weight: 600;
+            text-decoration: underline;
+            transition: color 0.3s ease;
+        }
+
+        .alert-info a:hover {
+            color: var(--dkut-light-green);
+        }
+
+        /* Loading State */
+        .btn-loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+                min-height: auto;
+            }
+            
+            .signup-container {
+                padding: 25px 20px;
+                border-radius: 16px;
+                margin: 10px auto;
+            }
+
+            .logo-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo-icon i {
+                font-size: 28px;
+            }
+
+            .signup-header h1 {
+                font-size: 22px;
+            }
+
+            .signup-header p {
+                font-size: 13px;
+            }
+
+            .form-group {
+                margin-bottom: 18px;
+            }
+
+            .form-control, .form-select {
+                padding: 9px 14px 9px 38px;
+                font-size: 13px;
+                height: 42px;
+            }
+            
+            .input-group i {
+                left: 10px;
+                font-size: 13px;
+            }
+            
+            .btn-primary, .btn-outline-secondary {
+                padding: 10px 16px;
+                font-size: 13px;
+                height: 42px;
+            }
+            
+            .verification-box i {
+                font-size: 50px;
+            }
+            
+            .verification-box h2 {
+                font-size: 20px;
+            }
+            
+            .verification-box p {
+                font-size: 13px;
+            }
+            
+            .verification-box strong {
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .signup-container {
+                padding: 20px 15px;
+            }
+            
+            .logo-icon {
+                width: 55px;
+                height: 55px;
+                margin-bottom: 12px;
+            }
+            
+            .logo-icon i {
+                font-size: 25px;
+            }
+            
+            .signup-header h1 {
+                font-size: 20px;
+                margin-bottom: 6px;
+            }
+            
+            .signup-header p {
+                font-size: 12px;
+            }
+            
+            .step-indicator {
+                margin-bottom: 20px;
+            }
+            
+            .form-control, .form-select {
+                padding: 8px 12px 8px 35px;
+                font-size: 12px;
+                height: 40px;
+            }
+            
+            .input-group i {
+                left: 10px;
+                font-size: 12px;
+            }
+            
+            .btn-primary, .btn-outline-secondary {
+                padding: 9px 14px;
+                font-size: 12px;
+                height: 40px;
+            }
+            
+            .helper-text {
+                font-size: 10px;
+            }
+            
+            .alert {
+                font-size: 12px;
+                padding: 10px;
+            }
+        }
+        
+        @media (max-height: 700px) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+            }
+            
+            .signup-container {
+                margin: 10px auto;
+            }
+        }
+
+        /* Animation for form elements */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stagger animation for form groups */
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        
+        /* For very small screens (iPhone SE, etc) */
+        @media (max-width: 320px) {
+            .signup-container {
+                padding: 18px 12px;
+            }
+            
+            .form-control, .form-select {
+                font-size: 11px;
+            }
+            
+            .btn-primary, .btn-outline-secondary {
+                font-size: 11px;
+            }
+        }
+        
+        /* For tablets and larger screens */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .signup-container {
+                max-width: 450px;
+                padding: 35px 30px;
+            }
+        }
+        
+        /* For landscape orientation on mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 5px;
+            }
+            
+            .signup-container {
+                margin: 5px auto;
+                max-height: 95vh;
+                overflow-y: auto;
+            }
+            
+            .signup-header {
+                margin-bottom: 20px;
+            }
+            
+            .logo-icon {
+                width: 50px;
+                height: 50px;
+                margin-bottom: 10px;
+            }
+            
+            .logo-icon i {
+                font-size: 24px;
+            }
+            
+            .signup-header h1 {
+                font-size: 18px;
+                margin-bottom: 5px;
+            }
+            
+            .signup-header p {
+                font-size: 12px;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="signup-container">
+        <div class="signup-header">
+            <div class="logo-icon">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <h1>DeKUT Lost & Found ID</h1>
+            <p>Create your student account</p>
+        </div>
+
+        <div class="step-indicator">
+            <div class="step-dot active" id="dot1"></div>
+            <div class="step-dot" id="dot2"></div>
+            <div class="step-dot" id="dot3"></div>
+        </div>
+
+        <form id="signupForm">
+            
+            <!-- Step 1: Personal Information -->
+            <div class="step-container active" id="step1">
+                <div class="form-group">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" class="form-control" id="firstName" placeholder="Enter your first name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" class="form-control" id="lastName" placeholder="Enter your last name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">School Email</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" class="form-control" id="email" placeholder="student@dkut.ac.ke" required>
+                    </div>
+                    <small class="helper-text">Use your official DeKUT email address</small>
+                </div>
+
+                <button type="button" class="btn-primary" onclick="nextStep(2)">
+                    Continue <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Step 2: Academic Information -->
+            <div class="step-container" id="step2">
+                <div class="form-group">
+                    <label for="regNumber" class="form-label">Registration Number</label>
+                    <div class="input-group">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" class="form-control" id="regNumber" placeholder="C025-01-0897/2021" required>
+                    </div>
+                    <small class="helper-text">Enter exactly as shown on your ID card</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" class="form-control" id="phone" placeholder="0712345678" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="school" class="form-label">School/Faculty</label>
+                    <div class="input-group">
+                        <i class="fas fa-building"></i>
+                        <select class="form-select" id="school" required>
+                            <option value="">Select your school</option>
+                            <option value="School of Business Management and Economics">School of Business Management and Economics</option>
+                            <option value="School of Engineering">School of Engineering</option>
+                            <option value="School of Science">School of Science</option>
+                            <option value="School of Computer Science and Information Technology">School of Computer Science and Information Technology</option>
+                            <option value="School of Nursing">School of Nursing</option>
+                            <option value="Institute of Geomatics, GIS and Remote Sensing">Institute of Geomatics, GIS and Remote Sensing</option>
+                            <option value="Institute of Food Bioresources Technology">Institute of Food Bioresources Technology</option>
+                            <option value="Geothermal Energy Training and Research Institute">Geothermal Energy Training and Research Institute</option>
+                            <option value="School of Graduate Studies and Research">School of Graduate Studies and Research</option>
+                            <option value="Institute of Tourism and Hospitality Management">Institute of Tourism and Hospitality Management</option>
+                            <option value="Institute of Technical and Professional Studies">Institute of Technical and Professional Studies</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="course" class="form-label">Course/Program</label>
+                    <div class="input-group">
+                        <i class="fas fa-graduation-cap"></i>
+                        <input type="text" class="form-control" id="course" placeholder="e.g., BSc in Computer Science" required>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-3">
+                    <button type="button" class="btn-primary" onclick="nextStep(3)">
+                        Continue <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button type="button" class="btn-outline-secondary" onclick="previousStep(1)">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Security -->
+            <div class="step-container" id="step3">
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-control" id="password" placeholder="Create a strong password" required minlength="6">
+                    </div>
+                    <div class="password-strength">
+                        <div class="password-strength-bar" id="passwordStrength"></div>
+                    </div>
+                    <small class="helper-text">At least 6 characters with letters and numbers</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Re-enter your password" required minlength="6">
+                    </div>
+                </div>
+
+                <div class="d-grid gap-3">
+                    <button type="submit" class="btn-primary" id="submitBtn">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                    <button type="button" class="btn-outline-secondary" onclick="previousStep(2)">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Verification -->
+            <div class="step-container" id="step4">
+                <div class="verification-box">
+                    <i class="fas fa-envelope-circle-check"></i>
+                    <h2>Verify Your Email</h2>
+                    <p>We've sent a verification link to:</p>
+                    <strong id="displayEmail"></strong>
+                    <p style="margin-top: 20px;">Click the link in the email to activate your account and start using the Lost & Found system.</p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Didn't receive the email?</strong><br>
+                            Check your spam folder or <a href="#" onclick="resendEmail(); return false;">resend verification email</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="login.html">Sign in here</a>
+        </div>
+
+        <div class="back-home">
+            <a href="../index.html"><i class="fas fa-arrow-left"></i> Back to Homepage</a>
+        </div>
+
+        <div id="errorMessage" class="alert alert-danger" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="errorText"></span>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script type="text/javascript">
+        (function() {
+            emailjs.init({
+                publicKey: "DqIUph2PK107n30rf"
+            });
+            console.log('✅ EmailJS initialized successfully');
+        })();
+    </script>
+    
+    <!-- The rest of your JavaScript remains exactly the same -->
+    <script type="module">
+    import { db, collection, addDoc, getDocs, query, where, updateDoc, doc } from '../js/firebase-config.js';
+    
+    let currentStep = 1;
+    let userEmail = '';
+    
+    // Password strength checker
+    document.getElementById('password').addEventListener('input', function(e) {
+        const password = e.target.value;
+        const strengthBar = document.getElementById('passwordStrength');
+        let strength = 0;
+        
+        if (password.length >= 6) strength += 25;
+        if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength += 25;
+        if (password.match(/\d/)) strength += 25;
+        if (password.match(/[^a-zA-Z\d]/)) strength += 25;
+        
+        strengthBar.className = 'password-strength-bar';
+        if (strength <= 25) {
+            strengthBar.classList.add('strength-weak');
+        } else if (strength <= 50) {
+            strengthBar.classList.add('strength-fair');
+        } else if (strength <= 75) {
+            strengthBar.classList.add('strength-good');
+        } else {
+            strengthBar.classList.add('strength-strong');
+        }
+    });
+    
+    // Make functions globally available
+    window.nextStep = function(step) {
+        const currentStepEl = document.getElementById('step' + currentStep);
+        const inputs = currentStepEl.querySelectorAll('input[required], select[required]');
+        let isValid = true;
+        
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                input.style.borderColor = '#dc3545';
+                isValid = false;
+            } else {
+                input.style.borderColor = '#e0e0e0';
+            }
+        });
+        
+        if (!isValid) {
+            showError('Please fill in all required fields');
+            return;
+        }
+
+        // Email validation for step 1
+        if (currentStep === 1) {
+            const emailInput = document.getElementById('email');
+            const email = emailInput.value.toLowerCase().trim();
+            if (!email.endsWith('@dkut.ac.ke') && !email.endsWith('@students.dkut.ac.ke')) {
+                emailInput.style.borderColor = '#dc3545';
+                showError('Please use your official DeKUT email address');
+                return;
+            } else {
+                emailInput.style.borderColor = '#e0e0e0';
+            }
+        }
+        
+        document.getElementById('step' + currentStep).classList.remove('active');
+        document.getElementById('dot' + currentStep).classList.remove('active');
+        
+        currentStep = step;
+        document.getElementById('step' + step).classList.add('active');
+        document.getElementById('dot' + step).classList.add('active');
+
+        document.getElementById('errorMessage').style.display = 'none';
+    }
+    
+    window.previousStep = function(step) {
+        document.getElementById('step' + currentStep).classList.remove('active');
+        document.getElementById('dot' + currentStep).classList.remove('active');
+        
+        currentStep = step;
+        document.getElementById('step' + step).classList.add('active');
+        document.getElementById('dot' + step).classList.add('active');
+        document.getElementById('errorMessage').style.display = 'none';
+    }
+    
+    window.resendEmail = async function() {
+        try {
+            const email = userEmail;
+            const token = generateToken();
+            
+            console.log('🔄 Resending email to:', email);
+            
+            const studentQuery = query(collection(db, 'students'), where('email', '==', email));
+            const studentSnapshot = await getDocs(studentQuery);
+            
+            if (!studentSnapshot.empty) {
+                const studentDoc = studentSnapshot.docs[0];
+                const studentData = studentDoc.data();
+                
+                await updateDoc(doc(db, 'students', studentDoc.id), {
+                    verificationToken: token
+                });
+                
+                const sent = await sendVerificationEmail(email, token, studentData.fullName);
+                
+                if (sent) {
+                    alert('✅ Verification email resent! Check your inbox and spam folder.');
+                }
+            }
+        } catch (error) {
+            console.error('❌ Error resending email:', error);
+            alert('❌ Failed to resend email. Please try again.');
+        }
+    }
+    
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+        
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('email').value.toLowerCase().trim();
+        const regNumber = document.getElementById('regNumber').value.toUpperCase().trim();
+        const phone = document.getElementById('phone').value.trim();
+        const school = document.getElementById('school').value;
+        const course = document.getElementById('course').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (password !== confirmPassword) {
+            showError('Passwords do not match!');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            return;
+        }
+        
+        if (!email.endsWith('@dkut.ac.ke') && !email.endsWith('@students.dkut.ac.ke')) {
+            showError('Please use your official DeKUT email address');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            return;
+        }
+        
+        try {
+            const regQuery = query(collection(db, 'students'), where('regNumber', '==', regNumber));
+            const regSnapshot = await getDocs(regQuery);
+            
+            if (!regSnapshot.empty) {
+                showError('This registration number is already registered!');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+                return;
+            }
+            
+            const emailQuery = query(collection(db, 'students'), where('email', '==', email));
+            const emailSnapshot = await getDocs(emailQuery);
+            
+            if (!emailSnapshot.empty) {
+                showError('This email is already registered!');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+                return;
+            }
+            
+            const studentData = {
+                firstName: firstName,
+                lastName: lastName,
+                fullName: `${firstName} ${lastName}`.toUpperCase(),
+                regNumber: regNumber,
+                email: email,
+                phone: phone,
+                school: school,
+                course: course,
+                password: password,
+                emailVerified: false,
+                verificationToken: generateToken(),
+                createdAt: new Date().toISOString(),
+                hasLostID: false,
+                
+            };
+            
+            const docRef = await addDoc(collection(db, 'students'), studentData);
+            console.log("✅ Student registered with ID:", docRef.id);
+            
+            const emailSent = await sendVerificationEmail(email, studentData.verificationToken, studentData.fullName);
+            
+            if (emailSent) {
+                userEmail = email;
+                document.getElementById('displayEmail').textContent = email;
+                document.getElementById('step3').classList.remove('active');
+                
+                document.getElementById('dot' + currentStep).classList.remove('active');
+                currentStep = 4;
+                
+                document.getElementById('step4').classList.add('active');
+            } else {
+                showError('Account created but email failed to send. Please contact support.');
+            }
+            
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            
+        } catch (error) {
+            console.error("❌ Registration error:", error);
+            showError('Registration failed. Please try again.');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+        }
+    });
+    
+    function generateToken() {
+        return Math.random().toString(36).substring(2) + Date.now().toString(36);
+    }
+    
+    async function sendVerificationEmail(email, token, fullName) {
+        try {
+            const verificationLink = `${window.location.origin}/pages/verify.html?token=${token}`;
+            
+            console.log('📧 Sending verification email to:', email);
+            console.log('🔗 Verification link:', verificationLink);
+
+            if (typeof emailjs === 'undefined') {
+                console.error('❌ EmailJS not loaded!');
+                alert('Email service not available. Please refresh the page and try again.');
+                return false;
+            }
+
+            const templateParams = {
+                to_email: email,
+                to_name: fullName,
+                verification_link: verificationLink
+            };
+
+            const response = await emailjs.send(
+                'service_rwj3dgm',
+                'template_2hfdbfq',
+                templateParams
+            );
+
+            console.log('✅ Email sent successfully!', response);
+            return true;
+
+        } catch (error) {
+            console.error('❌ Error sending email:', error);
+            
+            if (error.text && error.text.includes('aborted')) {
+                alert('⚠️ Email service blocked by browser. Please disable ad blocker and try again.');
+            } else if (error.status === 400) {
+                alert('❌ Invalid email configuration. Please contact support.');
+            } else {
+                alert('❌ Failed to send verification email. Check spam folder or contact support.');
+            }
+            
+            return false;
+        }
+    }
+    
+    function showError(message) {
+        document.getElementById('errorText').textContent = message;
+        document.getElementById('errorMessage').style.display = 'flex';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => {
+            document.getElementById('errorMessage').style.display = 'none';
+        }, 5000);
+    }
+
+    document.querySelectorAll('.form-control, .form-select').forEach(input => {
+        input.addEventListener('keyup', () => {
+            if (input.value) {
+                input.style.borderColor = '#e0e0e0';
+            }
+        });
+        input.addEventListener('change', () => {
+            if (input.value) {
+                input.style.borderColor = '#e0e0e0';
+            }
+        });
+    });
+
+    </script>
+
+</body>
+</html>

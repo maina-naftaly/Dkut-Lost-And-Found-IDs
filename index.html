@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeKUT Lost & Found ID System</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-id-card"></i> DeKUT Lost & Found ID
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/report-lost.html">Report Lost ID</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/upload-found.html">Upload Found ID</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/admin.html">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-4">Welcome to DeKUT Lost & Found ID</h1>
+            <p class="lead mb-5">AI-Powered system to reunite students with their lost ID cards</p>
+            
+            <!-- Statistics Cards -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <i class="fas fa-search fa-3x mb-3 text-primary"></i>
+                        <h3 id="lostCount">0</h3>
+                        <p>Lost IDs Reported</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <i class="fas fa-camera fa-3x mb-3 text-success"></i>
+                        <h3 id="foundCount">0</h3>
+                        <p>Found IDs Uploaded</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle fa-3x mb-3 text-warning"></i>
+                        <h3 id="matchCount">0</h3>
+                        <p>Successful Matches</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row g-3 justify-content-center">
+                <div class="col-md-5">
+                    <a href="pages/report-lost.html" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-exclamation-circle"></i> I Lost My ID
+                    </a>
+                </div>
+                <div class="col-md-5">
+                    <a href="pages/upload-found.html" class="btn btn-success btn-lg w-100">
+                        <i class="fas fa-camera"></i> I Found an ID
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="text-center mb-5">How It Works</h2>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <i class="fas fa-file-alt fa-2x mb-3"></i>
+                        <h5>Report Lost ID</h5>
+                        <p>Fill a simple form with your details</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <i class="fas fa-upload fa-2x mb-3"></i>
+                        <h5>Upload Found ID</h5>
+                        <p>Someone uploads a photo of your ID</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <i class="fas fa-robot fa-2x mb-3"></i>
+                        <h5>AI Matches</h5>
+                        <p>Our system automatically matches IDs</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <i class="fas fa-envelope fa-2x mb-3"></i>
+                        <h5>Get Notified</h5>
+                        <p>Receive an email when matched</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Dedan Kimathi University of Technology | Lost & Found ID System</p>
+            <p class="small">Powered by AI | Built with Love for DeKUT Students</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="js/app.js"></script>
+</body>
+</html>

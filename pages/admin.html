@@ -1,0 +1,2162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - DeKUT Lost & Found ID</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ===== DKUT THEME VARIABLES ===== */
+        :root {
+            --dkut-green: #1e5631;
+            --dkut-light-green: #4c9c6b;
+            --dkut-gold: #d4af37;
+            --color-bg-light: #ffffff;
+            --color-bg-card: #f8f9fa;
+            --color-text-dark: #333333;
+            --color-text-secondary: #6c757d;
+            --color-accent-red: #dc3545;
+            --color-accent-green: #28a745;
+            --color-accent-blue: #007bff;
+            --color-accent-orange: #fd7e14;
+            --color-border: rgba(0, 0, 0, 0.08);
+            --color-card-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                        url('../images/back.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--color-text-dark);
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            background: var(--dkut-green);
+            width: 250px;
+            min-height: 100vh;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .sidebar-brand {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .sidebar-brand i {
+            color: var(--dkut-gold);
+        }
+        
+        .admin-profile {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+        
+        .admin-avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            border: 3px solid var(--dkut-gold);
+        }
+        
+        .admin-avatar i {
+            font-size: 36px;
+            color: white;
+        }
+        
+        .admin-info h5 {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .admin-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0 20px;
+        }
+        
+        .sidebar-nav-item {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-nav-link:hover,
+        .sidebar-nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .sidebar-nav-link i {
+            margin-right: 12px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px var(--color-card-shadow);
+        }
+        
+        .top-bar h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dkut-green);
+            margin: 0;
+        }
+        
+        .top-bar h1 i {
+            color: var(--dkut-gold);
+            margin-right: 10px;
+        }
+        
+        .logout-btn {
+            background: var(--dkut-green);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: var(--dkut-light-green);
+        }
+        
+        .logout-btn i {
+            margin-right: 8px;
+        }
+
+        /* ===== STATS CARDS ===== */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 2px 10px var(--color-card-shadow);
+            transition: all 0.3s;
+            border: 1px solid var(--color-border);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card.lost .stat-icon {
+            color: var(--color-accent-red);
+        }
+        
+        .stat-card.found .stat-icon {
+            color: var(--color-accent-green);
+        }
+        
+        .stat-card.students .stat-icon {
+            color: var(--color-accent-blue);
+        }
+        
+        .stat-card.matched .stat-icon {
+            color: var(--dkut-gold);
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--color-text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: var(--color-text-secondary);
+        }
+
+        /* ===== TABS ===== */
+        .tabs-container {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px var(--color-card-shadow);
+        }
+        
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .tab-btn:hover {
+            background: var(--color-bg-card);
+            color: var(--dkut-green);
+        }
+        
+        .tab-btn.active {
+            color: var(--dkut-green);
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--dkut-green);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ===== TABLES ===== */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .admin-table thead {
+            background: var(--dkut-green);
+            color: white;
+        }
+        
+        .admin-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .admin-table tbody tr {
+            border-bottom: 1px solid var(--color-border);
+            transition: background 0.2s;
+        }
+        
+        .admin-table tbody tr:hover {
+            background: var(--color-bg-card);
+        }
+        
+        .admin-table td {
+            padding: 15px;
+            font-size: 15px;
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-matched {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-collected {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+        
+        .status-lost {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-searching {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-found {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-update {
+            background: var(--dkut-green);
+            color: white;
+        }
+        
+        .btn-update:hover {
+            background: var(--dkut-light-green);
+        }
+        
+        .btn-delete {
+            background: var(--color-accent-red);
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+        }
+        
+        .btn-notify {
+            background: var(--color-accent-orange);
+            color: white;
+        }
+        
+        .btn-notify:hover {
+            background: #e06c00;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dkut-green);
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        /* ===== FORM STYLES ===== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-dark);
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-control, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--dkut-green);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 86, 49, 0.1);
+        }
+
+        /* ===== LOADING ===== */
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading-spinner i {
+            font-size: 48px;
+            color: var(--dkut-green);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 220px;
+            }
+            
+            .main-content {
+                margin-left: 220px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                min-height: auto;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tabs-header {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                width: 100%;
+                text-align: left;
+                border-bottom: 1px solid var(--color-border);
+            }
+            
+            .tab-btn.active::after {
+                left: 0;
+                width: 100%;
+            }
+            
+            .action-btn {
+                display: block;
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <i class="fas fa-user-shield"></i> Admin Panel
+            </div>
+        </div>
+        
+        <div class="admin-profile">
+            <div class="admin-avatar">
+                <i class="fas fa-user-cog"></i>
+            </div>
+            <div class="admin-info">
+                <h5 id="adminName">Administrator</h5>
+                <p>Super Admin</p>
+            </div>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link active" data-tab="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link" data-tab="lost-ids">
+                    <i class="fas fa-exclamation-triangle"></i> Lost IDs
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link" data-tab="found-ids">
+                    <i class="fas fa-camera"></i> Found IDs
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link" data-tab="students">
+                    <i class="fas fa-users"></i> Students
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link" data-tab="analytics">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <h1><i class="fas fa-user-shield"></i> Admin Dashboard</h1>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-container">
+            <div class="stat-card lost">
+                <div class="stat-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-number" id="totalLost">0</div>
+                <div class="stat-label">Lost IDs Reported</div>
+            </div>
+            
+            <div class="stat-card found">
+                <div class="stat-icon">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <div class="stat-number" id="totalFound">0</div>
+                <div class="stat-label">Found IDs Uploaded</div>
+            </div>
+            
+            <div class="stat-card matched">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-number" id="totalMatched">0</div>
+                <div class="stat-label">Verified IDs</div>
+            </div>
+            
+            <div class="stat-card students">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number" id="totalStudents">0</div>
+                <div class="stat-label">Registered Students</div>
+            </div>
+        </div>
+
+        <!-- Tabs Container -->
+        <div class="tabs-container">
+            <!-- Tabs Header -->
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="lost-ids">Lost IDs</button>
+                <button class="tab-btn" data-tab="found-ids">Found IDs</button>
+                <button class="tab-btn" data-tab="students">Students</button>
+                <button class="tab-btn" data-tab="analytics">Analytics</button>
+            </div>
+
+            <!-- Tab Contents -->
+            <!-- Lost IDs Tab -->
+            <div class="tab-content active" id="lost-ids-tab">
+                <div class="table-container">
+                    <table class="admin-table" id="lostTable">
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Student Name</th>
+                                <th>Registration No.</th>
+                                <th>Date Lost</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Report Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lostTableBody">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="lostLoading" class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading lost ID reports...</p>
+                </div>
+            </div>
+
+            <!-- Found IDs Tab -->
+            <div class="tab-content" id="found-ids-tab">
+                <div class="table-container">
+                    <table class="admin-table" id="foundTable">
+                        <thead>
+                            <tr>
+                                <th>Upload ID</th>
+                                <th>Finder Name</th>
+                                <th>Extracted Name</th>
+                                <th>Extracted Reg No.</th>
+                                <th>Location Found</th>
+                                <th>Upload Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="foundTableBody">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="foundLoading" class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading found ID uploads...</p>
+                </div>
+            </div>
+
+            <!-- Students Tab -->
+            <div class="tab-content" id="students-tab">
+                <div class="table-container">
+                    <table class="admin-table" id="studentsTable">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Full Name</th>
+                                <th>Registration No.</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>School</th>
+                                <th>Email Verified</th>
+                                <th>ID Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="studentsLoading" class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading students...</p>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analytics-tab">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                    <div class="stat-card">
+                        <h4><i class="fas fa-calendar-alt"></i> Today's Activity</h4>
+                        <div class="mt-3">
+                            <p><strong>Lost IDs Today:</strong> <span id="lostToday">0</span></p>
+                            <p><strong>Found IDs Today:</strong> <span id="foundToday">0</span></p>
+                            <p><strong>New Students Today:</strong> <span id="studentsToday">0</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4><i class="fas fa-chart-pie"></i> Status Overview</h4>
+                        <div class="mt-3">
+                            <p><strong>Pending Found Items:</strong> <span id="pendingFound">0</span></p>
+                            <p><strong>Matched IDs:</strong> <span id="matchedCount">0</span></p>
+                            <p><strong>Collected IDs:</strong> <span id="collectedCount">0</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card mt-4">
+                    <h4><i class="fas fa-history"></i> Recent Activity</h4>
+                    <div id="recentActivity" class="mt-3">
+                        <!-- Recent activity will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Lost ID Status Modal -->
+    <div class="modal-overlay" id="updateLostStatusModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Update Lost ID Status</h3>
+                <button class="modal-close" id="closeLostUpdateModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="updateLostStatusForm">
+                    <input type="hidden" id="updateLostItemId">
+                    <input type="hidden" id="updateLostItemType">
+                    <input type="hidden" id="updateLostStudentName">
+                    <input type="hidden" id="updateLostRegNumber">
+                    <input type="hidden" id="updateLostLocation">
+                    <input type="hidden" id="updateLostDate">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Current Status</label>
+                        <div id="currentLostStatusDisplay" class="form-control" style="background: #f8f9fa;"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newLostStatus" class="form-label">New Status</label>
+                        <select class="form-select" id="newLostStatus" required>
+                            <option value="">Select Status</option>
+                            <option value="found">Found (Transfer to Found IDs)</option>
+                        </select>
+                        <small class="text-muted">
+                            <strong>Note:</strong> When marked as "found", this ID will be transferred to the Found IDs table for further processing.
+                        </small>
+                    </div>
+                    
+                    <div class="form-group" id="foundLocationGroup">
+                        <label for="foundLocation" class="form-label">Where was it found? (Optional)</label>
+                        <input type="text" class="form-control" id="foundLocation" placeholder="e.g., Security Office, Library, etc.">
+                    </div>
+                    
+                    <div class="form-group" id="finderNameGroup">
+                        <label for="finderName" class="form-label">Found by (Optional)</label>
+                        <input type="text" class="form-control" id="finderName" placeholder="e.g., Security Guard, Student, Staff, etc.">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lostStatusNotes" class="form-label">Admin Notes (Optional)</label>
+                        <textarea class="form-control" id="lostStatusNotes" rows="3" placeholder="Add any notes about this status update..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelLostUpdate">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveLostStatusUpdate">Mark as Found</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Found ID Status Modal -->
+    <div class="modal-overlay" id="updateStatusModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Update Found ID Status</h3>
+                <button class="modal-close" id="closeUpdateModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="updateStatusForm">
+                    <input type="hidden" id="updateItemId">
+                    <input type="hidden" id="updateItemType">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Current Status</label>
+                        <div id="currentStatusDisplay" class="form-control" style="background: #f8f9fa;"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newStatus" class="form-label">New Status</label>
+                        <select class="form-select" id="newStatus" required>
+                            <option value="">Select Status</option>
+                            <option value="pending">Pending (Awaiting Verification)</option>
+                            <option value="matched">Matched (Notify Student)</option>
+                            <option value="collected">Collected (Student Received ID)</option>
+                        </select>
+                        <small class="text-muted">
+                            <strong>Status Flow:</strong> pending → matched → collected<br>
+                            <strong>Note:</strong> When set to "collected", student's notification will be removed from their dashboard
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="statusNotes" class="form-label">Admin Notes (Optional)</label>
+                        <textarea class="form-control" id="statusNotes" rows="3" placeholder="Add any notes about this status update..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelUpdate">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveStatusUpdate">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Confirm Delete</h3>
+                <button class="modal-close" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteMessage">Are you sure you want to delete this item?</p>
+                <input type="hidden" id="deleteItemId">
+                <input type="hidden" id="deleteItemType">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelDelete">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase Import -->
+    <script type="module">
+    console.log("🔥 Admin Panel Loading...");
+
+    // Import Firebase modules from your config file
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { 
+        getFirestore, 
+        collection, 
+        getDocs, 
+        getDoc,
+        query, 
+        where, 
+        updateDoc, 
+        doc, 
+        deleteDoc,
+        orderBy,
+        limit,
+        addDoc,
+        Timestamp
+    } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDz82pR8baoyqNyB9zXFmBdOTpR3SJzIcM",
+        authDomain: "lost-and-found-dekut.firebaseapp.com",
+        projectId: "lost-and-found-dekut",
+        storageBucket: "lost-and-found-dekut.firebasestorage.app",
+        messagingSenderId: "1090599283019",
+        appId: "1:1090599283019:web:8c0d6583641439a9ea60ce"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ================================
+    // HELPER FUNCTION: Parse Firestore Timestamps
+    // ================================
+    function parseFirestoreTimestamp(timestamp) {
+        if (!timestamp) return null;
+        
+        // Check if it's a Firestore Timestamp object
+        if (timestamp.toDate && typeof timestamp.toDate === 'function') {
+            return timestamp.toDate();
+        }
+        // Check if it has seconds property (Firestore Timestamp)
+        else if (timestamp.seconds && typeof timestamp.seconds === 'number') {
+            return new Date(timestamp.seconds * 1000);
+        }
+        // Check if it's a regular Date string
+        else if (typeof timestamp === 'string') {
+            const date = new Date(timestamp);
+            return isNaN(date.getTime()) ? null : date;
+        }
+        // If it's already a Date object
+        else if (timestamp instanceof Date) {
+            return timestamp;
+        }
+        
+        return null;
+    }
+
+    // ================================
+    // 1. CHECK ADMIN AUTHENTICATION
+    // ================================
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if user is logged in (from sessionStorage)
+        const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+        const userRole = sessionStorage.getItem('userRole');
+        
+        if (!isLoggedIn || userRole !== 'admin') {
+            alert('Access denied. Please login as admin.');
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        // Display admin name
+        const userName = sessionStorage.getItem('userName') || sessionStorage.getItem('adminName') || 'Administrator';
+        document.getElementById('adminName').textContent = userName;
+        
+        // Initialize the admin panel
+        initializeAdminPanel();
+    });
+
+    // ================================
+    // 2. INITIALIZE ADMIN PANEL
+    // ================================
+    
+    function initializeAdminPanel() {
+        console.log("🔄 Initializing Admin Panel...");
+        
+        // Load statistics
+        loadStatistics();
+        
+        // Load lost IDs
+        loadLostIDs();
+        
+        // Set up tab switching
+        setupTabs();
+        
+        // Set up modal handlers
+        setupModalHandlers();
+        
+        // Set up logout
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+        
+        console.log("✅ Admin Panel Initialized!");
+    }
+
+    // ================================
+    // 3. TAB MANAGEMENT
+    // ================================
+    
+    function setupTabs() {
+        // Tab buttons in header
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                switchTab(tabId);
+            });
+        });
+        
+        // Sidebar links
+        document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const tabId = this.getAttribute('data-tab');
+                switchTab(tabId);
+            });
+        });
+    }
+    
+    function switchTab(tabId) {
+        console.log(`🔄 Switching to tab: ${tabId}`);
+        
+        // Update active tab button
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+        
+        // Update active sidebar link
+        document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        document.querySelector(`.sidebar-nav-link[data-tab="${tabId}"]`).classList.add('active');
+        
+        // Show active tab content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(`${tabId}-tab`).classList.add('active');
+        
+        // Load data for the tab if needed
+        switch(tabId) {
+            case 'lost-ids':
+                loadLostIDs();
+                break;
+            case 'found-ids':
+                loadFoundIDs();
+                break;
+            case 'students':
+                loadStudents();
+                break;
+            case 'analytics':
+                loadAnalytics();
+                break;
+        }
+    }
+
+    // ================================
+    // 4. LOAD STATISTICS
+    // ================================
+    
+    async function loadStatistics() {
+        try {
+            console.log("📊 Loading statistics...");
+            
+            // Get counts from different collections
+            const [lostSnapshot, foundSnapshot, studentsSnapshot, matchedSnapshot, collectedSnapshot] = await Promise.all([
+                getDocs(collection(db, 'lostReports')),
+                getDocs(collection(db, 'foundUploads')),
+                getDocs(collection(db, 'students')),
+                getDocs(query(collection(db, 'foundUploads'), where('status', '==', 'matched'))),
+                getDocs(query(collection(db, 'foundUploads'), where('status', '==', 'collected')))
+            ]);
+            
+            // Update statistics
+            document.getElementById('totalLost').textContent = lostSnapshot.size;
+            document.getElementById('totalFound').textContent = foundSnapshot.size;
+            document.getElementById('totalStudents').textContent = studentsSnapshot.size;
+            document.getElementById('totalMatched').textContent = matchedSnapshot.size;
+            
+            console.log("✅ Statistics loaded!");
+            
+        } catch (error) {
+            console.error("❌ Error loading statistics:", error);
+            // Initialize with zeros if there's an error
+            document.getElementById('totalLost').textContent = '0';
+            document.getElementById('totalFound').textContent = '0';
+            document.getElementById('totalStudents').textContent = '0';
+            document.getElementById('totalMatched').textContent = '0';
+        }
+    }
+
+    // ================================
+    // 5. LOAD LOST IDs - UPDATED WITH DATE FIX
+    // ================================
+    
+    async function loadLostIDs() {
+        try {
+            console.log("🔍 Loading lost IDs...");
+            const lostTableBody = document.getElementById('lostTableBody');
+            const loadingElement = document.getElementById('lostLoading');
+            
+            // Clear previous data
+            lostTableBody.innerHTML = '';
+            loadingElement.style.display = 'block';
+            
+            // Query lost reports, ordered by date (newest first)
+            const lostQuery = query(
+                collection(db, 'lostReports'),
+                orderBy('reportDate', 'desc')
+            );
+            
+            const lostSnapshot = await getDocs(lostQuery);
+            
+            if (lostSnapshot.empty) {
+                lostTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px;">
+                            <i class="fas fa-inbox" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                            <p>No lost ID reports found</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                lostSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    
+                    // FIXED: Use helper function to parse timestamps
+                    const dateLostObj = parseFirestoreTimestamp(data.dateLost);
+                    const dateLost = dateLostObj ? dateLostObj.toLocaleDateString() : 'Not specified';
+                    
+                    const reportDateObj = parseFirestoreTimestamp(data.reportDate);
+                    const reportDate = reportDateObj ? reportDateObj.toLocaleDateString() : 'N/A';
+                    
+                    // Determine status badge - only show searching if not found
+                    let statusBadge = '';
+                    if (data.status === 'found') {
+                        statusBadge = '<span class="status-badge status-found">Found</span>';
+                    } else {
+                        statusBadge = '<span class="status-badge status-searching">Searching</span>';
+                    }
+                    
+                    lostTableBody.innerHTML += `
+                        <tr>
+                            <td>${doc.id.substring(0, 8)}...</td>
+                            <td>${data.fullName || 'N/A'}</td>
+                            <td>${data.admissionNumber || 'N/A'}</td>
+                            <td>${dateLost}</td>
+                            <td>${data.locationLost || 'Not specified'}</td>
+                            <td>${statusBadge}</td>
+                            <td>${reportDate}</td>
+                            <td>
+                                <button class="action-btn btn-update" onclick="showLostUpdateModal('${doc.id}', 'lost', '${data.status || 'searching'}', '${data.fullName || 'Student'}', '${data.admissionNumber || 'N/A'}', '${data.locationLost || ''}', '${dateLost}')">
+                                    <i class="fas fa-edit"></i> Update
+                                </button>
+                                <button class="action-btn btn-delete" onclick="showDeleteModal('${doc.id}', 'lost', '${data.fullName || 'Lost ID Report'}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </td>
+                            </tr>
+                        `;
+                });
+            }
+            
+            loadingElement.style.display = 'none';
+            console.log(`✅ Loaded ${lostSnapshot.size} lost IDs`);
+            
+        } catch (error) {
+            console.error("❌ Error loading lost IDs:", error);
+            document.getElementById('lostTableBody').innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px; color: #dc3545;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error loading data. Please try again.</p>
+                        <small>${error.message}</small>
+                    </td>
+                </tr>
+            `;
+            document.getElementById('lostLoading').style.display = 'none';
+        }
+    }
+
+    // ================================
+    // 6. LOAD FOUND IDs - UPDATED WITH DATE FIX
+    // ================================
+    
+    async function loadFoundIDs() {
+        try {
+            console.log("📷 Loading found IDs...");
+            const foundTableBody = document.getElementById('foundTableBody');
+            const loadingElement = document.getElementById('foundLoading');
+            
+            // Clear previous data
+            foundTableBody.innerHTML = '';
+            loadingElement.style.display = 'block';
+            
+            // Query found uploads, ordered by date (newest first)
+            const foundQuery = query(
+                collection(db, 'foundUploads'),
+                orderBy('uploadDate', 'desc')
+            );
+            
+            const foundSnapshot = await getDocs(foundQuery);
+            
+            if (foundSnapshot.empty) {
+                foundTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px;">
+                            <i class="fas fa-inbox" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                            <p>No found ID uploads found</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                foundSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    
+                    // FIXED: Use helper function to parse timestamps
+                    const uploadDateObj = parseFirestoreTimestamp(data.uploadDate);
+                    const uploadDate = uploadDateObj ? uploadDateObj.toLocaleDateString() : 'N/A';
+                    
+                    // Determine status badge
+                    let statusBadge = '';
+                    if (data.status === 'matched') {
+                        statusBadge = '<span class="status-badge status-matched">Matched</span>';
+                    } else if (data.status === 'collected') {
+                        statusBadge = '<span class="status-badge status-collected">Collected</span>';
+                    } else {
+                        statusBadge = '<span class="status-badge status-pending">Pending</span>';
+                    }
+                    
+                    foundTableBody.innerHTML += `
+                        <tr>
+                            <td>${doc.id.substring(0, 8)}...</td>
+                            <td>${data.finderName || 'Anonymous'}</td>
+                            <td>${data.extractedName || 'Not detected'}</td>
+                            <td>${data.extractedAdmission || 'Not detected'}</td>
+                            <td>${data.locationFound || 'Not specified'}</td>
+                            <td>${uploadDate}</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <button class="action-btn btn-update" onclick="showUpdateModal('${doc.id}', 'found', '${data.status || 'pending'}', '${data.extractedName || 'Found ID'}')">
+                                    <i class="fas fa-edit"></i> Update Status
+                                </button>
+                                <button class="action-btn btn-delete" onclick="showDeleteModal('${doc.id}', 'found', '${data.extractedName || 'Found ID'}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            loadingElement.style.display = 'none';
+            console.log(`✅ Loaded ${foundSnapshot.size} found IDs`);
+            
+        } catch (error) {
+            console.error("❌ Error loading found IDs:", error);
+            document.getElementById('foundTableBody').innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px; color: #dc3545;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error loading data. Please try again.</p>
+                        <small>${error.message}</small>
+                    </td>
+                </tr>
+            `;
+            document.getElementById('foundLoading').style.display = 'none';
+        }
+    }
+
+    // ================================
+    // 7. LOAD STUDENTS
+    // ================================
+    
+    async function loadStudents() {
+        try {
+            console.log("👥 Loading students...");
+            const studentsTableBody = document.getElementById('studentsTableBody');
+            const loadingElement = document.getElementById('studentsLoading');
+            
+            // Clear previous data
+            studentsTableBody.innerHTML = '';
+            loadingElement.style.display = 'block';
+            
+            // Query students, ordered by registration number
+            const studentsQuery = query(
+                collection(db, 'students'),
+                orderBy('regNumber')
+            );
+            
+            const studentsSnapshot = await getDocs(studentsQuery);
+            
+            if (studentsSnapshot.empty) {
+                studentsTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px;">
+                            <i class="fas fa-users" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                            <p>No students found</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                studentsSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    
+                    // Email verification status
+                    const verifiedStatus = data.emailVerified ? 
+                        '<span class="status-badge status-matched">Verified</span>' : 
+                        '<span class="status-badge status-pending">Pending</span>';
+                    
+                    // ID status
+                    const idStatus = data.hasLostID ? 
+                        '<span class="status-badge status-lost">Lost</span>' : 
+                        '<span class="status-badge status-matched">Safe</span>';
+                    
+                    studentsTableBody.innerHTML += `
+                        <tr>
+                            <td>${doc.id.substring(0, 8)}...</td>
+                            <td>${data.fullName || 'N/A'}</td>
+                            <td>${data.regNumber || 'N/A'}</td>
+                            <td>${data.email || 'N/A'}</td>
+                            <td>${data.phone || 'N/A'}</td>
+                            <td>${data.school || 'N/A'}</td>
+                            <td>${verifiedStatus}</td>
+                            <td>${idStatus}</td>
+                            <td>
+                                <button class="action-btn btn-delete" onclick="showDeleteModal('${doc.id}', 'student', '${data.fullName || 'Student'}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            loadingElement.style.display = 'none';
+            console.log(`✅ Loaded ${studentsSnapshot.size} students`);
+            
+        } catch (error) {
+            console.error("❌ Error loading students:", error);
+            document.getElementById('studentsTableBody').innerHTML = `
+                <tr>
+                    <td colspan="9" style="text-align: center; padding: 40px; color: #dc3545;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error loading data. Please try again.</p>
+                        <small>${error.message}</small>
+                    </td>
+                </tr>
+            `;
+            document.getElementById('studentsLoading').style.display = 'none';
+        }
+    }
+
+    // ================================
+    // 8. LOAD ANALYTICS - UPDATED WITH DATE FIX
+    // ================================
+    
+    async function loadAnalytics() {
+        try {
+            console.log("📈 Loading analytics...");
+            
+            // Get today's date at midnight
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // Get all data for calculations
+            const [lostSnapshot, foundSnapshot, studentsSnapshot] = await Promise.all([
+                getDocs(collection(db, 'lostReports')),
+                getDocs(collection(db, 'foundUploads')),
+                getDocs(collection(db, 'students'))
+            ]);
+            
+            // Calculate today's counts
+            let lostToday = 0;
+            let foundToday = 0;
+            let studentsToday = 0;
+            
+            lostSnapshot.forEach(doc => {
+                const data = doc.data();
+                // FIXED: Use helper function
+                const reportDate = parseFirestoreTimestamp(data.reportDate);
+                if (reportDate && reportDate >= today) {
+                    lostToday++;
+                }
+            });
+            
+            foundSnapshot.forEach(doc => {
+                const data = doc.data();
+                // FIXED: Use helper function
+                const uploadDate = parseFirestoreTimestamp(data.uploadDate);
+                if (uploadDate && uploadDate >= today) {
+                    foundToday++;
+                }
+            });
+            
+            studentsSnapshot.forEach(doc => {
+                const data = doc.data();
+                // FIXED: Use helper function
+                const createdAt = parseFirestoreTimestamp(data.createdAt);
+                if (createdAt && createdAt >= today) {
+                    studentsToday++;
+                }
+            });
+            
+            // Calculate pending, matched, and collected items
+            const pendingFoundQuery = query(collection(db, 'foundUploads'), where('status', '==', 'pending'));
+            const pendingFoundSnapshot = await getDocs(pendingFoundQuery);
+            
+            const matchedQuery = query(collection(db, 'foundUploads'), where('status', '==', 'matched'));
+            const matchedSnapshot = await getDocs(matchedQuery);
+            
+            const collectedQuery = query(collection(db, 'foundUploads'), where('status', '==', 'collected'));
+            const collectedSnapshot = await getDocs(collectedQuery);
+            
+            // Update analytics
+            document.getElementById('lostToday').textContent = lostToday;
+            document.getElementById('foundToday').textContent = foundToday;
+            document.getElementById('studentsToday').textContent = studentsToday;
+            document.getElementById('pendingFound').textContent = pendingFoundSnapshot.size;
+            document.getElementById('matchedCount').textContent = matchedSnapshot.size;
+            document.getElementById('collectedCount').textContent = collectedSnapshot.size;
+            
+            // Load recent activity
+            await loadRecentActivity();
+            
+            console.log("✅ Analytics loaded!");
+            
+        } catch (error) {
+            console.error("❌ Error loading analytics:", error);
+        }
+    }
+    
+    async function loadRecentActivity() {
+        try {
+            const recentActivityDiv = document.getElementById('recentActivity');
+            
+            // Get recent found uploads (last 5)
+            const foundQuery = query(
+                collection(db, 'foundUploads'),
+                orderBy('uploadDate', 'desc'),
+                limit(5)
+            );
+            
+            const foundSnapshot = await getDocs(foundQuery);
+            
+            let activityHTML = '<div class="list-group">';
+            
+            if (foundSnapshot.empty) {
+                activityHTML += '<p class="text-muted">No recent activity</p>';
+            } else {
+                foundSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    // FIXED: Use helper function
+                    const uploadDate = parseFirestoreTimestamp(data.uploadDate);
+                    const date = uploadDate ? uploadDate.toLocaleString() : 'Unknown date';
+                    
+                    let statusBadge = '';
+                    if (data.status === 'matched') {
+                        statusBadge = '<span class="badge bg-success float-end">Matched</span>';
+                    } else if (data.status === 'collected') {
+                        statusBadge = '<span class="badge bg-primary float-end">Collected</span>';
+                    } else {
+                        statusBadge = '<span class="badge bg-warning float-end">Pending</span>';
+                    }
+                    
+                    activityHTML += `
+                        <div class="list-group-item">
+                            <small class="text-muted">${date}</small><br>
+                            <strong>${data.finderName || 'Someone'}</strong> uploaded ID for 
+                            <strong>${data.extractedName || 'unknown student'}</strong>
+                            ${statusBadge}
+                        </div>
+                    `;
+                });
+            }
+            
+            activityHTML += '</div>';
+            recentActivityDiv.innerHTML = activityHTML;
+            
+        } catch (error) {
+            console.error("❌ Error loading recent activity:", error);
+            document.getElementById('recentActivity').innerHTML = '<p class="text-danger">Error loading activity</p>';
+        }
+    }
+
+    // ================================
+    // 9. MODAL HANDLERS
+    // ================================
+    
+    function setupModalHandlers() {
+        // Update Lost Status Modal
+        const updateLostModal = document.getElementById('updateLostStatusModal');
+        const closeLostUpdateBtn = document.getElementById('closeLostUpdateModal');
+        const cancelLostUpdateBtn = document.getElementById('cancelLostUpdate');
+        
+        closeLostUpdateBtn.addEventListener('click', () => {
+            updateLostModal.classList.remove('active');
+        });
+        
+        cancelLostUpdateBtn.addEventListener('click', () => {
+            updateLostModal.classList.remove('active');
+        });
+        
+        // Save lost status update
+        document.getElementById('saveLostStatusUpdate').addEventListener('click', async function() {
+            await updateLostStatus();
+        });
+        
+        // Update Status Modal (for found IDs)
+        const updateModal = document.getElementById('updateStatusModal');
+        const closeUpdateBtn = document.getElementById('closeUpdateModal');
+        const cancelUpdateBtn = document.getElementById('cancelUpdate');
+        
+        closeUpdateBtn.addEventListener('click', () => {
+            updateModal.classList.remove('active');
+        });
+        
+        cancelUpdateBtn.addEventListener('click', () => {
+            updateModal.classList.remove('active');
+        });
+        
+        // Save status update (for found IDs)
+        document.getElementById('saveStatusUpdate').addEventListener('click', async function() {
+            await updateStatus();
+        });
+        
+        // Delete Modal
+        const deleteModal = document.getElementById('deleteModal');
+        const closeDeleteBtn = document.getElementById('closeDeleteModal');
+        const cancelDeleteBtn = document.getElementById('cancelDelete');
+        
+        closeDeleteBtn.addEventListener('click', () => {
+            deleteModal.classList.remove('active');
+        });
+        
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteModal.classList.remove('active');
+        });
+        
+        // Confirm delete
+        document.getElementById('confirmDelete').addEventListener('click', async function() {
+            await deleteItem();
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target === updateLostModal) {
+                updateLostModal.classList.remove('active');
+            }
+            if (event.target === updateModal) {
+                updateModal.classList.remove('active');
+            }
+            if (event.target === deleteModal) {
+                deleteModal.classList.remove('active');
+            }
+        });
+    }
+
+    // ================================
+    // 10. LOST ID UPDATE FUNCTIONALITY
+    // ================================
+    
+    window.showLostUpdateModal = function(itemId, itemType, currentStatus, studentName, regNumber, location, dateLost) {
+        console.log(`📝 Opening update modal for lost ID: ${itemId}`);
+        
+        if (itemType !== 'lost') {
+            alert('This function is only for lost IDs.');
+            return;
+        }
+        
+        // Don't allow updating if already found
+        if (currentStatus === 'found') {
+            alert('This ID has already been marked as found. No further updates allowed.');
+            return;
+        }
+        
+        // Set modal data
+        document.getElementById('updateLostItemId').value = itemId;
+        document.getElementById('updateLostItemType').value = itemType;
+        document.getElementById('updateLostStudentName').value = studentName;
+        document.getElementById('updateLostRegNumber').value = regNumber;
+        document.getElementById('updateLostLocation').value = location;
+        document.getElementById('updateLostDate').value = dateLost;
+        
+        document.getElementById('currentLostStatusDisplay').textContent = `${studentName} (${regNumber}) - Current Status: ${currentStatus}`;
+        
+        // Set default values for location and finder name
+        document.getElementById('foundLocation').value = location || '';
+        document.getElementById('finderName').value = 'Security Office';
+        
+        // Clear notes
+        document.getElementById('lostStatusNotes').value = '';
+        
+        // Show modal
+        document.getElementById('updateLostStatusModal').classList.add('active');
+    };
+    
+    async function updateLostStatus() {
+        const itemId = document.getElementById('updateLostItemId').value;
+        const itemType = document.getElementById('updateLostItemType').value;
+        const newStatus = document.getElementById('newLostStatus').value;
+        const studentName = document.getElementById('updateLostStudentName').value;
+        const regNumber = document.getElementById('updateLostRegNumber').value;
+        const locationLost = document.getElementById('updateLostLocation').value;
+        const dateLost = document.getElementById('updateLostDate').value;
+        const foundLocation = document.getElementById('foundLocation').value;
+        const finderName = document.getElementById('finderName').value;
+        const notes = document.getElementById('lostStatusNotes').value;
+        
+        if (!newStatus) {
+            alert('Please select a new status');
+            return;
+        }
+        
+        if (itemType !== 'lost') {
+            alert('Only lost IDs can be updated here.');
+            return;
+        }
+        
+        if (newStatus !== 'found') {
+            alert('Only "found" status is available for lost IDs.');
+            return;
+        }
+        
+        try {
+            console.log(`🔄 Marking lost ID ${itemId} as found...`);
+            
+            // Get the lost report document
+            const lostDocRef = doc(db, 'lostReports', itemId);
+            const lostDoc = await getDoc(lostDocRef);
+            
+            if (!lostDoc.exists()) {
+                alert('Document not found!');
+                return;
+            }
+            
+            const lostData = lostDoc.data();
+            
+            // 1. Update the lost report status to "found"
+            await updateDoc(lostDocRef, {
+                status: 'found',
+                foundDate: Timestamp.now(),
+                foundLocation: foundLocation || 'Not specified',
+                finderName: finderName || 'Unknown',
+                adminNotes: notes || '',
+                updatedBy: sessionStorage.getItem('userName') || 'Admin',
+                updatedAt: Timestamp.now()
+            });
+            
+            console.log(`✅ Lost ID marked as found: ${itemId}`);
+            
+            // 2. Create a new document in foundUploads collection
+            const foundData = {
+                // Copy relevant data from lost report
+                extractedName: lostData.fullName || studentName,
+                extractedAdmission: lostData.admissionNumber || regNumber,
+                
+                // Add found-specific information
+                finderName: finderName || 'Security Office',
+                locationFound: foundLocation || locationLost || 'Not specified',
+                uploadDate: Timestamp.now(),
+                uploadedBy: sessionStorage.getItem('userName') || 'Admin',
+                
+                // Link back to the lost report
+                linkedLostReportId: itemId,
+                source: 'admin_marked_found',
+                
+                // Set initial status
+                status: 'pending', // Start as pending for verification
+                
+                // Additional metadata
+                adminNotes: `Marked as found by admin. Original lost date: ${dateLost}. ${notes}`,
+                verificationRequired: true
+            };
+            
+            // Add to foundUploads collection
+            const foundDocRef = await addDoc(collection(db, 'foundUploads'), foundData);
+            
+            console.log(`✅ Created found ID record: ${foundDocRef.id}`);
+            
+            // 3. Create notification for the student
+            const notificationData = {
+                studentRegNumber: regNumber,
+                studentName: studentName,
+                itemId: foundDocRef.id,
+                itemType: 'found',
+                message: `Your lost ID (${regNumber}) has been found! It is now in the found items list for verification.`,
+                status: 'unread',
+                createdAt: Timestamp.now(),
+                adminNotified: true,
+                adminName: sessionStorage.getItem('userName') || 'Admin'
+            };
+            
+            await addDoc(collection(db, 'notifications'), notificationData);
+            
+            console.log(`✅ Created notification for student: ${regNumber}`);
+            
+            // Close modal
+            document.getElementById('updateLostStatusModal').classList.remove('active');
+            
+            // Show success message
+            alert(`✅ Successfully marked as found!\n\n• Lost ID updated to "found" status\n• New record created in Found IDs (pending verification)\n• Student notified on their dashboard\n\nThe ID will now appear in the Found IDs tab for further processing.`);
+            
+            // Refresh both tables
+            loadLostIDs();
+            loadFoundIDs();
+            
+            // Refresh statistics
+            loadStatistics();
+            
+        } catch (error) {
+            console.error("❌ Error updating lost ID status:", error);
+            alert(`Error marking as found: ${error.message}`);
+        }
+    }
+
+    // ================================
+    // 11. UPDATE STATUS FUNCTION (FOR FOUND IDs)
+    // ================================
+    
+    window.showUpdateModal = async function(itemId, itemType, currentStatus, itemName) {
+        console.log(`📝 Opening update modal for ${itemType}: ${itemId}`);
+        
+        if (itemType !== 'found') {
+            alert('Only found IDs can have their status updated by admin.');
+            return;
+        }
+        
+        // Set modal data
+        document.getElementById('updateItemId').value = itemId;
+        document.getElementById('updateItemType').value = itemType;
+        document.getElementById('currentStatusDisplay').textContent = `${itemName} - Current Status: ${currentStatus}`;
+        
+        // Get the full document data for student info
+        let studentRegNumber = '';
+        let studentName = '';
+        
+        try {
+            const foundDocRef = doc(db, 'foundUploads', itemId);
+            const foundDoc = await getDoc(foundDocRef);
+            if (foundDoc.exists()) {
+                const foundData = foundDoc.data();
+                studentRegNumber = foundData.extractedAdmission || '';
+                studentName = foundData.extractedName || '';
+            }
+        } catch (error) {
+            console.error("Error getting document data:", error);
+        }
+        
+        // Set status options based on current status
+        const statusSelect = document.getElementById('newStatus');
+        statusSelect.innerHTML = '';
+        statusSelect.disabled = false;
+        
+        if (currentStatus === 'pending') {
+            // Allow changing to 'matched' from 'pending'
+            statusSelect.innerHTML = `
+                <option value="">Select Status</option>
+                <option value="matched">Matched (Notify Student)</option>
+            `;
+        } else if (currentStatus === 'matched') {
+            // Allow changing to 'collected' from 'matched'
+            statusSelect.innerHTML = `
+                <option value="">Select Status</option>
+                <option value="collected">Collected (Student Received ID)</option>
+            `;
+        } else if (currentStatus === 'collected') {
+            // No further changes allowed
+            statusSelect.innerHTML = `
+                <option value="collected" selected>Collected (Final Status)</option>
+            `;
+            statusSelect.disabled = true;
+            document.getElementById('statusNotes').value = 'This ID has already been collected.';
+            document.getElementById('statusNotes').disabled = true;
+            alert('This ID has already been collected. No further status changes allowed.');
+        } else {
+            // Default options
+            statusSelect.innerHTML = `
+                <option value="">Select Status</option>
+                <option value="pending">Pending (Awaiting Verification)</option>
+                <option value="matched">Matched (Notify Student)</option>
+                <option value="collected">Collected (Student Received ID)</option>
+            `;
+        }
+        
+        document.getElementById('statusNotes').value = '';
+        document.getElementById('statusNotes').disabled = false;
+        
+        // Show modal
+        document.getElementById('updateStatusModal').classList.add('active');
+    };
+    
+    async function updateStatus() {
+        const itemId = document.getElementById('updateItemId').value;
+        const itemType = document.getElementById('updateItemType').value;
+        const newStatus = document.getElementById('newStatus').value;
+        const notes = document.getElementById('statusNotes').value;
+        
+        if (!newStatus) {
+            alert('Please select a new status');
+            return;
+        }
+        
+        if (itemType !== 'found') {
+            alert('Only found IDs can have their status updated.');
+            return;
+        }
+        
+        try {
+            console.log(`🔄 Updating found ID ${itemId} to status: ${newStatus}`);
+            
+            // Get current document data first
+            const foundDocRef = doc(db, 'foundUploads', itemId);
+            const foundDoc = await getDoc(foundDocRef);
+            
+            if (!foundDoc.exists()) {
+                alert('Document not found!');
+                return;
+            }
+            
+            const foundData = foundDoc.data();
+            const studentRegNumber = foundData.extractedAdmission;
+            const studentName = foundData.extractedName;
+            
+            // Prepare update data
+            const updateData = {
+                status: newStatus,
+                statusUpdatedAt: Timestamp.now(),
+                updatedBy: sessionStorage.getItem('userName') || 'Admin'
+            };
+            
+            if (notes) {
+                updateData.statusNotes = notes;
+            }
+            
+            // If changing to 'matched', create a notification for the student
+            if (newStatus === 'matched' && studentRegNumber) {
+                const notificationData = {
+                    studentRegNumber: studentRegNumber,
+                    studentName: studentName,
+                    itemId: itemId,
+                    itemType: 'found',
+                    message: `Your ID (${studentRegNumber}) has been found and matched! Please visit the Security Office to collect it.`,
+                    status: 'unread',
+                    createdAt: Timestamp.now(),
+                    adminNotified: true,
+                    adminName: sessionStorage.getItem('userName') || 'Admin'
+                };
+                
+                await addDoc(collection(db, 'notifications'), notificationData);
+                console.log(`✅ Created notification for student: ${studentRegNumber}`);
+            }
+            
+            // If changing to 'collected', we need to:
+            // 1. Update the found item status
+            // 2. Add to collectedIDs collection
+            // 3. Remove any notifications for this student
+            if (newStatus === 'collected') {
+                if (!studentRegNumber) {
+                    alert('Cannot mark as collected: No student registration number found in this item.');
+                    return;
+                }
+                
+                // Add to collectedIDs collection
+                const collectedData = {
+                    admissionNumber: studentRegNumber,
+                    studentName: studentName,
+                    foundItemId: itemId,
+                    collectedDate: Timestamp.now(),
+                    collectedBy: sessionStorage.getItem('userName') || 'Admin',
+                    notes: notes || 'Marked as collected by admin',
+                    locationFound: foundData.locationFound || 'Not specified',
+                    finderName: foundData.finderName || 'Anonymous',
+                    uploadDate: foundData.uploadDate || Timestamp.now()
+                };
+                
+                await addDoc(collection(db, 'collectedIDs'), collectedData);
+                
+                // Remove any notifications for this student
+                await removeStudentNotifications(studentRegNumber);
+                
+                console.log(`✅ Added to collectedIDs and removed notifications for student: ${studentRegNumber}`);
+            }
+            
+            // Update the document
+            await updateDoc(foundDocRef, updateData);
+            
+            console.log(`✅ Found ID status updated successfully to: ${newStatus}`);
+            
+            // Close modal
+            document.getElementById('updateStatusModal').classList.remove('active');
+            
+            // Show success message
+            let successMessage = `Status updated to "${newStatus}" successfully!`;
+            if (newStatus === 'collected') {
+                successMessage += '\n\nStudent notification has been removed from their dashboard.';
+            } else if (newStatus === 'matched') {
+                successMessage += '\n\nStudent has been notified on their dashboard.';
+            }
+            alert(successMessage);
+            
+            // Refresh the data
+            loadFoundIDs();
+            
+            // Refresh statistics
+            loadStatistics();
+            
+        } catch (error) {
+            console.error("❌ Error updating status:", error);
+            alert(`Error updating status: ${error.message}`);
+        }
+    }
+
+    // ================================
+    // 12. REMOVE STUDENT NOTIFICATIONS FUNCTION
+    // ================================
+    
+    async function removeStudentNotifications(studentRegNumber) {
+        try {
+            console.log(`🔔 Removing notifications for student: ${studentRegNumber}`);
+            
+            // Query notifications for this student
+            const notificationsQuery = query(
+                collection(db, 'notifications'),
+                where('studentRegNumber', '==', studentRegNumber),
+                where('status', '==', 'unread')
+            );
+            
+            const notificationsSnapshot = await getDocs(notificationsQuery);
+            
+            if (!notificationsSnapshot.empty) {
+                // Update each notification to mark as read/removed
+                const updatePromises = [];
+                notificationsSnapshot.forEach((doc) => {
+                    updatePromises.push(
+                        updateDoc(doc.ref, {
+                            status: 'read',
+                            readAt: Timestamp.now(),
+                            markedAsCollected: true
+                        })
+                    );
+                });
+                
+                await Promise.all(updatePromises);
+                console.log(`✅ Removed ${notificationsSnapshot.size} notifications for student: ${studentRegNumber}`);
+            }
+            
+            // Also update student's dashboard status if needed
+            const studentQuery = query(
+                collection(db, 'students'),
+                where('regNumber', '==', studentRegNumber)
+            );
+            
+            const studentSnapshot = await getDocs(studentQuery);
+            if (!studentSnapshot.empty) {
+                const studentDoc = studentSnapshot.docs[0];
+                await updateDoc(studentDoc.ref, {
+                    hasLostID: false,
+                    lastUpdated: Timestamp.now(),
+                    idStatus: 'safe'
+                });
+                console.log(`✅ Updated student ${studentRegNumber} hasLostID to false`);
+            }
+            
+            // Also update any lost reports for this student
+            const lostReportsQuery = query(
+                collection(db, 'lostReports'),
+                where('admissionNumber', '==', studentRegNumber),
+                where('status', '!=', 'found')
+            );
+            
+            const lostReportsSnapshot = await getDocs(lostReportsQuery);
+            if (!lostReportsSnapshot.empty) {
+                const updatePromises = [];
+                lostReportsSnapshot.forEach((doc) => {
+                    updatePromises.push(
+                        updateDoc(doc.ref, {
+                            status: 'found',
+                            foundDate: Timestamp.now(),
+                            notes: 'Marked as collected by admin'
+                        })
+                    );
+                });
+                
+                await Promise.all(updatePromises);
+                console.log(`✅ Updated ${lostReportsSnapshot.size} lost reports for student: ${studentRegNumber}`);
+            }
+            
+        } catch (error) {
+            console.error("❌ Error removing notifications:", error);
+            // Don't throw error here, just log it
+        }
+    }
+
+    // ================================
+    // 13. DELETE FUNCTION
+    // ================================
+    
+    window.showDeleteModal = function(itemId, itemType, itemName) {
+        console.log(`🗑️ Opening delete modal for ${itemType}: ${itemId}`);
+        
+        // Set modal data
+        document.getElementById('deleteItemId').value = itemId;
+        document.getElementById('deleteItemType').value = itemType;
+        
+        let message = '';
+        if (itemType === 'student') {
+            message = `Are you sure you want to delete student: ${itemName}? This action cannot be undone.`;
+        } else if (itemType === 'lost') {
+            message = `Are you sure you want to delete this lost report? This action cannot be undone.`;
+        } else if (itemType === 'found') {
+            message = `Are you sure you want to delete this found item? This action cannot be undone.`;
+        }
+        
+        document.getElementById('deleteMessage').textContent = message;
+        
+        // Show modal
+        document.getElementById('deleteModal').classList.add('active');
+    };
+    
+    async function deleteItem() {
+        const itemId = document.getElementById('deleteItemId').value;
+        const itemType = document.getElementById('deleteItemType').value;
+        
+        try {
+            console.log(`🗑️ Deleting ${itemType}: ${itemId}`);
+            
+            let collectionName = '';
+            if (itemType === 'student') {
+                collectionName = 'students';
+            } else if (itemType === 'lost') {
+                collectionName = 'lostReports';
+            } else if (itemType === 'found') {
+                collectionName = 'foundUploads';
+            } else {
+                alert('Invalid item type');
+                return;
+            }
+            
+            // Delete the document
+            await deleteDoc(doc(db, collectionName, itemId));
+            
+            console.log(`✅ ${itemType} deleted successfully!`);
+            
+            // Close modal
+            document.getElementById('deleteModal').classList.remove('active');
+            
+            // Show success message
+            alert(`${itemType.charAt(0).toUpperCase() + itemType.slice(1)} deleted successfully!`);
+            
+            // Refresh the data
+            switch(itemType) {
+                case 'student':
+                    loadStudents();
+                    break;
+                case 'lost':
+                    loadLostIDs();
+                    break;
+                case 'found':
+                    loadFoundIDs();
+                    break;
+            }
+            
+            // Refresh statistics
+            loadStatistics();
+            
+        } catch (error) {
+            console.error("❌ Error deleting item:", error);
+            alert('Error deleting item. Please try again.');
+        }
+    }
+
+    // ================================
+    // 14. LOGOUT FUNCTION
+    // ================================
+    
+    function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        sessionStorage.clear();
+        
+        // Get the current origin (http://localhost:5000)
+        const baseUrl = window.location.origin;
+        
+        // Construct the absolute URL
+        window.location.href = baseUrl + '/pages/login.html';
+        
+        // OR if your server serves from 'pages/' folder directly:
+        // window.location.href = baseUrl + '/login.html';
+    }
+}
+
+    // ================================
+    // 15. MAKE FUNCTIONS AVAILABLE GLOBALLY
+    // ================================
+    
+    // Make the functions available to onclick handlers
+    window.loadLostIDs = loadLostIDs;
+    window.loadFoundIDs = loadFoundIDs;
+    window.loadStudents = loadStudents;
+    window.loadAnalytics = loadAnalytics;
+    window.loadStatistics = loadStatistics;
+
+    console.log("🎉 Admin Panel Ready!");
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Firebase cache
+.firebase/
+.firebaserc
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Build files
+dist/
+build/
